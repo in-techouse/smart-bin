@@ -1,9 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RegistrationActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:paddingTop="@dimen/registrationpadding"
+        android:paddingBottom="@dimen/registrationpadding"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:background="@android:color/holo_red_light"
+            android:textSize="@dimen/textsize"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAlignment="center"
+            android:padding="@dimen/textpadding"
+            android:text="@string/registration_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edt1stName"
+            android:inputType="textPersonName"
+            android:hint="@string/enter_first_name"
+            android:padding="@dimen/textpadding"
+            android:layout_margin="@dimen/textsize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <EditText
+                android:id="@+id/edtLastName"
+                android:inputType="textPersonName"
+                android:hint="@string/enter_last_name"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edtEmail"
+            android:inputType="textEmailAddress"
+            android:hint="@string/e_mail"
+            android:padding="@dimen/textpadding"
+            android:layout_margin="@dimen/textsize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            app:passwordToggleEnabled="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <EditText
+                android:id="@+id/edtPasword"
+                android:inputType="textPassword"
+                android:hint="@string/pasword"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            app:passwordToggleEnabled="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edtConPasword"
+                android:inputType="textPassword"
+                android:hint="@string/confirmation_pasword"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/btnRegistration"
+            android:background="@android:color/holo_red_light"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/textsize"
+            android:textAlignment="center"
+            android:text="Submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/go_to_login"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAlignment="center"
+            android:text="@string/go_to_login"
+            android:padding="@dimen/textpadding"
+            android:layout_margin="@dimen/margen25"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</ScrollView>
+

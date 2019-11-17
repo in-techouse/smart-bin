@@ -28,4 +28,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.rbddevs.splashy:splashy:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.21+" // For JAVA Only
+    implementation 'com.android.support:design:29.0.0'
 }

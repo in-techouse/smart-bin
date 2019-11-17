@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="registrationpadding">35dp</dimen>
+    <dimen name="textsize">22sp</dimen>
+    <dimen name="textpadding">12dp</dimen>
+    <dimen name="ButtonMargin">25dp</dimen>
+    <dimen name="margen25">25dp</dimen>
+    <dimen name="loginbtnsize">22sp</dimen>
+</resources>
