@@ -16,6 +16,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:autoSizeMinTextSize="22sp"
             android:background="@android:color/holo_red_light"
             android:textSize="@dimen/textsize"
             android:textColor="@color/colorPrimaryDark"
