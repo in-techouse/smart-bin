@@ -10,10 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnLogin;
     EditText edtEmail, edtPasword;
+    String strEmail, strPasword;
     TextView go_to_registertaion;
     TextView go_to_forgetPasword;
 
@@ -41,24 +46,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (id) {
             case R.id.btnLogin: {
 
-                String strEmail = edtEmail.getText().toString();
-                String strPasword = edtPasword.getText().toString();
+                 strEmail = edtEmail.getText().toString();
+                 strPasword = edtPasword.getText().toString();
 
-                if (strEmail.length() < 6 || !Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
-                    edtEmail.setError("Enter a Valid email");
-                } else {
-                    edtEmail.setError(null);
-                }
-
-
-                if (strPasword.length() < 6) {
-                    edtPasword.setError("Enter Valid pasword");
-                } else {
-                    edtPasword.setError(null);
-                }
-
-
+                  boolean flag= isValid();
+                  if (flag) {
+                      //Firebase
+                      FirebaseAuth auth = FirebaseAuth.getInstance();
+                      auth.signInWithEmailAndPassword(strEmail, strPasword);
+                  }
                 break;
+
 
             }
             case R.id.go_to_registration: {
@@ -74,5 +72,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+    private boolean isValid(){
+        boolean flag = true;
+        if (strEmail.length() < 6 || !Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
+            edtEmail.setError("Enter a Valid email");
+            flag = false;
+        } else {
+            edtEmail.setError(null);
+        }
+
+
+        if (strPasword.length() < 6) {
+            edtPasword.setError("Enter Valid pasword");
+            flag = false;
+        } else {
+            edtPasword.setError(null);
+        }
+        return flag;
+    }
+
+
 }
 
