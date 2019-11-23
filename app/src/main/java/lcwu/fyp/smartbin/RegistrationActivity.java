@@ -1,15 +1,21 @@
 package lcwu.fyp.smartbin;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
@@ -17,8 +23,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     Button btnRegister;
     String str1stName, strlastName, strRegEmail, strRegPasword, strConPasword;
     TextView go_to_login;
-
     EditText edt1stName, edtlastName, edtEmail, edtPasword, edtConPasword;
+    ProgressBar RegistrationProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         edtEmail = findViewById(R.id.edtEmail);
         edtPasword = findViewById(R.id.edtPasword);
         edtConPasword = findViewById(R.id.edtConPasword);
+        RegistrationProgress = findViewById(R.id.RegistrationProgress);
 
         go_to_login = findViewById(R.id.go_to_login);
 
@@ -55,8 +62,27 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 boolean flag = isValid();
                 if (flag) {
                     //Firebase
+                    RegistrationProgress.setVisibility(View.VISIBLE);
+                    btnRegister.setVisibility(View.GONE);
                     FirebaseAuth auth = FirebaseAuth.getInstance();
-                    auth.createUserWithEmailAndPassword(strRegEmail, strRegPasword);
+                    auth.createUserWithEmailAndPassword(strRegEmail, strRegPasword)
+                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    RegistrationProgress.setVisibility(View.GONE);
+                                    btnRegister.setVisibility(View.VISIBLE);
+                                    Log.e("Registration","Success");
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    RegistrationProgress.setVisibility(View.GONE);
+                                    btnRegister.setVisibility(View.VISIBLE);
+                                    Log.e("Registration", "Faliure " + e.getMessage());
+
+                                }
+                            });
 
                 }
                 break;
