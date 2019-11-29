@@ -3,7 +3,10 @@ package lcwu.fyp.smartbin;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -19,6 +22,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.shreyaspatil.MaterialDialog.MaterialDialog;
+import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -54,11 +59,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (id) {
             case R.id.btnLogin: {
 
+                //Check Internet
+                boolean isConn = isConnected();
+                if (!isConn){
+                    //Show Error Message, because no internet found
+                    MaterialDialog mDialog = new MaterialDialog.Builder(this)
+                            .setTitle("Internet Error?")
+                            .setMessage("No internet found cehck your internet connection and try again?")
+                            .setCancelable(false)
+                            .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int which) {
+                                    // Delete Operation
+                                }
+                            })
+                            .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int which) {
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .build();
+
+                    // Show Dialog
+                    mDialog.show();
+                    return;
+                }
+
                  strEmail = edtEmail.getText().toString();
                  strPasword = edtPasword.getText().toString();
 
                   boolean flag= isValid();
                   if (flag) {
+
                       //Firebase
                       LoginProgress.setVisibility(View.VISIBLE);
                       btnLogin.setVisibility(View.GONE);
@@ -116,6 +149,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         return flag;
     }
+
+    // Check Internet Connection
+    private boolean isConnected() {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED)
+            connected = true;
+        else
+            connected = false;
+        return  connected;
+    }
+
+
 
 
 }
