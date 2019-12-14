@@ -17,9 +17,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.shreyaspatil.MaterialDialog.MaterialDialog;
+import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
+
+import lcwu.fyp.smartbin.director.Helpers;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
-
+    Helpers helpers;
     Button btnRegister;
     String str1stName, strlastName, strRegEmail, strRegPasword, strConPasword;
     TextView go_to_login;
@@ -30,6 +34,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
+        helpers = new Helpers();
 
         btnRegister = findViewById(R.id.btnRegistration);
         edt1stName = findViewById(R.id.edt1stName);
@@ -53,6 +59,36 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         int id = v.getId();
         switch (id) {
             case R.id.btnRegistration: {
+
+                //Check Internet
+                boolean isConn = helpers.isConnected(RegistrationActivity.this);
+                if (!isConn){
+                    //Show Error Message, because no internet found
+                    MaterialDialog mDialog = new MaterialDialog.Builder(this)
+                            .setTitle("Internet Error?")
+                            .setMessage("No internet found check your internet connection and try again?")
+                            .setCancelable(false)
+                            .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int which) {
+                                    // Delete Operation
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int which) {
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .build();
+
+                    // Show Dialog
+                    mDialog.show();
+                    return;
+                }
+
+
                 str1stName = edt1stName.getText().toString();
                 strlastName = edtlastName.getText().toString();
                 strRegEmail = edtEmail.getText().toString();
@@ -71,6 +107,9 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                 public void onSuccess(AuthResult authResult) {
                                     RegistrationProgress.setVisibility(View.GONE);
                                     btnRegister.setVisibility(View.VISIBLE);
+                                    Intent it = new Intent(RegistrationActivity.this,DashBoard.class);
+                                    startActivity(it);
+                                    finish();
                                     Log.e("Registration","Success");
 
                                 }

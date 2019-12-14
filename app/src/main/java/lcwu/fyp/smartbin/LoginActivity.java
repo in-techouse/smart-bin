@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
+import lcwu.fyp.smartbin.director.Helpers;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnLogin;
@@ -33,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView go_to_registertaion;
     TextView go_to_forgetPasword;
     ProgressBar LoginProgress;
+    Helpers helpers;
 
 
     @Override
@@ -50,7 +54,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin.setOnClickListener(this);
         go_to_registertaion.setOnClickListener(this);
         go_to_forgetPasword.setOnClickListener(this);
-    }
+
+        helpers = new Helpers();
+        }
 
     @Override
     public void onClick(View v) {
@@ -60,17 +66,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin: {
 
                 //Check Internet
-                boolean isConn = isConnected();
+                boolean isConn =helpers.isConnected(LoginActivity.this);
                 if (!isConn){
                     //Show Error Message, because no internet found
                     MaterialDialog mDialog = new MaterialDialog.Builder(this)
                             .setTitle("Internet Error?")
-                            .setMessage("No internet found cehck your internet connection and try again?")
+                            .setMessage("No internet found check your internet connection and try again?")
                             .setCancelable(false)
                             .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int which) {
                                     // Delete Operation
+                                    dialogInterface.dismiss();
                                 }
                             })
                             .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
@@ -102,17 +109,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                   public void onSuccess(AuthResult authResult) {
                                       LoginProgress.setVisibility(View.GONE);
                                       btnLogin.setVisibility(View.VISIBLE);
+                                      Intent it = new Intent(LoginActivity.this,DashBoard.class);
+                                      startActivity(it);
+                                      finish();
                                       Log.e("Login", "Success");
 
                                   }
                               }).addOnFailureListener(new OnFailureListener() {
-                          @Override
-                          public void onFailure(@NonNull Exception e) {
-                              LoginProgress.setVisibility(View.GONE);
-                              btnLogin.setVisibility(View.VISIBLE);
-                              Log.e("Login", "Faliure" +e.getMessage());
-                          }
-                      });
+                                  @Override
+                                  public void onFailure(@NonNull Exception e) {
+                                      LoginProgress.setVisibility(View.GONE);
+                                      btnLogin.setVisibility(View.VISIBLE);
+                                      Log.e("Login", "Faliure" +e.getMessage());
+                                  }
+                              });
                   }
                 break;
 
@@ -150,16 +160,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return flag;
     }
 
-    // Check Internet Connection
-    private boolean isConnected() {
-        boolean connected = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED)
-            connected = true;
-        else
-            connected = false;
-        return  connected;
-    }
+
 
 
 
