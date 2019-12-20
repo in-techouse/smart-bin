@@ -9,9 +9,11 @@
     tools:context=".ForgetPaswordActivity">
 
     <TextView
+        android:textStyle="bold"
+        android:textAllCaps="true"
         android:autoSizeMinTextSize="22sp"
-        android:background="@android:color/holo_red_light"
-        android:textColor="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="@dimen/textsize"
         android:padding="@dimen/textpadding"
@@ -34,10 +36,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:layout_margin="@dimen/margen25"
         android:id="@+id/btnForSubmit"
         android:textSize="@dimen/textsize"
-        android:background="@android:color/holo_red_light"
-        android:textColor="@color/colorPrimaryDark"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/white"
         android:text="Submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -120,6 +120,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                   public void onFailure(@NonNull Exception e) {
                                       LoginProgress.setVisibility(View.GONE);
                                       btnLogin.setVisibility(View.VISIBLE);
+                                      MaterialDialog mDialog = new MaterialDialog.Builder(LoginActivity.this)
+                                              .setTitle("Login Failed")
+                                              .setMessage(e.getMessage())
+                                              .setCancelable(false)
+                                              .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
+                                                  @Override
+                                                  public void onClick(DialogInterface dialogInterface, int which) {
+                                                      // Delete Operation
+                                                      dialogInterface.dismiss();
+                                                  }
+                                              })
+                                              .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
+                                                  @Override
+                                                  public void onClick(DialogInterface dialogInterface, int which) {
+                                                      dialogInterface.dismiss();
+                                                  }
+                                              })
+                                              .build();
+
+                                      // Show Dialog
+                                      mDialog.show();
                                       Log.e("Login", "Faliure" +e.getMessage());
                                   }
                               });

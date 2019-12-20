@@ -9,17 +9,16 @@
     tools:context=".RegistrationActivity">
 
     <LinearLayout
-        android:paddingTop="@dimen/registrationpadding"
-        android:paddingBottom="@dimen/registrationpadding"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:autoSizeMinTextSize="22sp"
-            android:background="@android:color/holo_red_light"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:background="@color/colorPrimary"
             android:textSize="@dimen/textsize"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/white"
             android:textAlignment="center"
             android:padding="@dimen/textpadding"
             android:text="@string/registration_screen"
@@ -107,12 +106,13 @@
 
 
         <Button
+            android:padding="@dimen/textpadding"
             android:id="@+id/btnRegistration"
-            android:background="@android:color/holo_red_light"
-            android:textColor="@color/colorPrimaryDark"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/white"
             android:textSize="@dimen/textsize"
             android:textAlignment="center"
-            android:text="Submit"
+            android:text="@string/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
