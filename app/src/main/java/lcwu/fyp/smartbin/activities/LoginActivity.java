@@ -1,14 +1,10 @@
-package lcwu.fyp.smartbin;
+package lcwu.fyp.smartbin.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -21,11 +17,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
+import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {

@@ -1,4 +1,4 @@
-package lcwu.fyp.smartbin;
+package lcwu.fyp.smartbin.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +14,8 @@ import android.widget.Switch;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+
+import lcwu.fyp.smartbin.R;
 
 public class ForgetPaswordActivity extends AppCompatActivity implements View.OnClickListener {
     Button btnForSubmit;

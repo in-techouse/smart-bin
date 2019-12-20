@@ -1,4 +1,4 @@
-package lcwu.fyp.smartbin;
+package lcwu.fyp.smartbin.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
+import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {

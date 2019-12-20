@@ -1,8 +1,10 @@
-package lcwu.fyp.smartbin;
+package lcwu.fyp.smartbin.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import lcwu.fyp.smartbin.R;
 
 public class BookingActivity extends AppCompatActivity {
 

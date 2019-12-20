@@ -1,8 +1,9 @@
 package lcwu.fyp.smartbin.model;
 
+import java.io.Serializable;
 import java.util.jar.Attributes;
 
-public class User
+public class User implements Serializable
 {
 
     private String firstName, lastName, e_mail, id;

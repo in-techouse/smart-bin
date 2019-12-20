@@ -1,13 +1,13 @@
-package lcwu.fyp.smartbin;
+package lcwu.fyp.smartbin.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.arch.core.util.Function;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.rbddevs.splashy.Splashy;
+
+import lcwu.fyp.smartbin.R;
 
 public class SplashActivity extends AppCompatActivity {
 
