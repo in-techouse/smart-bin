@@ -17,11 +17,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
+import lcwu.fyp.smartbin.model.User;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
     Helpers helpers;
@@ -60,32 +63,10 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         int id = v.getId();
         switch (id) {
             case R.id.btnRegistration: {
-
                 //Check Internet
                 boolean isConn = helpers.isConnected(RegistrationActivity.this);
                 if (!isConn){
-                    //Show Error Message, because no internet found
-                    MaterialDialog mDialog = new MaterialDialog.Builder(this)
-                            .setTitle("Internet Error?")
-                            .setMessage("No internet found check your internet connection and try again?")
-                            .setCancelable(false)
-                            .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
-                                    // Delete Operation
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                            .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                            .build();
-
-                    // Show Dialog
-                    mDialog.show();
+                    helpers.showError(RegistrationActivity.this,"Internet Error", "No internet found check your internet connection and try again?");
                     return;
                 }
 
@@ -106,12 +87,15 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                             .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
-                                    RegistrationProgress.setVisibility(View.GONE);
-                                    btnRegister.setVisibility(View.VISIBLE);
-                                    Intent it = new Intent(RegistrationActivity.this,DashBoard.class);
-                                    startActivity(it);
-                                    finish();
-                                    Log.e("Registration","Success");
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                    User user = new User();
+//                                    reference.child("Users").setValue
+//                                    RegistrationProgress.setVisibility(View.GONE);
+//                                    btnRegister.setVisibility(View.VISIBLE);
+//                                    Intent it = new Intent(RegistrationActivity.this,DashBoard.class);
+//                                    startActivity(it);
+//                                    finish();
+//                                    Log.e("Registration","Success");
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -119,29 +103,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                 public void onFailure(@NonNull Exception e) {
                                     RegistrationProgress.setVisibility(View.GONE);
                                     btnRegister.setVisibility(View.VISIBLE);
-                                    MaterialDialog mDialog = new MaterialDialog.Builder(RegistrationActivity.this)
-                                            .setTitle("Registration Failed")
-                                            .setMessage(e.getMessage())
-                                            .setCancelable(false)
-                                            .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int which) {
-                                                    // Delete Operation
-                                                    dialogInterface.dismiss();
-                                                }
-                                            })
-                                            .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int which) {
-                                                    dialogInterface.dismiss();
-                                                }
-                                            })
-                                            .build();
-
-                                    // Show Dialog
-                                    mDialog.show();
-                                    Log.e("Registration", "Faliure " + e.getMessage());
-
+                                    helpers.showError(RegistrationActivity.this, "Registration Failed", e.getMessage());
                                 }
                             });
 

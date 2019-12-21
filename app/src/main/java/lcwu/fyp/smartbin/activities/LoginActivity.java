@@ -17,6 +17,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
@@ -63,28 +68,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //Check Internet
                 boolean isConn =helpers.isConnected(LoginActivity.this);
                 if (!isConn){
-                    //Show Error Message, because no internet found
-                    MaterialDialog mDialog = new MaterialDialog.Builder(this)
-                            .setTitle("Internet Error?")
-                            .setMessage("No internet found check your internet connection and try again?")
-                            .setCancelable(false)
-                            .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
-                                    // Delete Operation
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                            .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int which) {
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                            .build();
-
-                    // Show Dialog
-                    mDialog.show();
+                    helpers.showError(LoginActivity.this, "Internet Error","No internet found check your internet connection and try again?");
                     return;
                 }
 
@@ -102,12 +86,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                               .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                   @Override
                                   public void onSuccess(AuthResult authResult) {
-                                      LoginProgress.setVisibility(View.GONE);
-                                      btnLogin.setVisibility(View.VISIBLE);
-                                      Intent it = new Intent(LoginActivity.this,DashBoard.class);
-                                      startActivity(it);
-                                      finish();
-                                      Log.e("Login", "Success");
+                                      DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+                                      reference.child("User").addValueEventListener(new ValueEventListener() {
+                                          @Override
+                                          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                          }
+
+                                          @Override
+                                          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                          }
+                                      });
+//                                      LoginProgress.setVisibility(View.GONE);
+//                                      btnLogin.setVisibility(View.VISIBLE);
+//                                      Intent it = new Intent(LoginActivity.this,DashBoard.class);
+//                                      startActivity(it);
+//                                      finish();
+//                                      Log.e("Login", "Success");
 
                                   }
                               }).addOnFailureListener(new OnFailureListener() {
@@ -115,28 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                   public void onFailure(@NonNull Exception e) {
                                       LoginProgress.setVisibility(View.GONE);
                                       btnLogin.setVisibility(View.VISIBLE);
-                                      MaterialDialog mDialog = new MaterialDialog.Builder(LoginActivity.this)
-                                              .setTitle("Login Failed")
-                                              .setMessage(e.getMessage())
-                                              .setCancelable(false)
-                                              .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
-                                                  @Override
-                                                  public void onClick(DialogInterface dialogInterface, int which) {
-                                                      // Delete Operation
-                                                      dialogInterface.dismiss();
-                                                  }
-                                              })
-                                              .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
-                                                  @Override
-                                                  public void onClick(DialogInterface dialogInterface, int which) {
-                                                      dialogInterface.dismiss();
-                                                  }
-                                              })
-                                              .build();
-
-                                      // Show Dialog
-                                      mDialog.show();
-                                      Log.e("Login", "Faliure" +e.getMessage());
+                                      helpers.showError(LoginActivity.this, "Login Failed", e.getMessage());
                                   }
                               });
                   }
