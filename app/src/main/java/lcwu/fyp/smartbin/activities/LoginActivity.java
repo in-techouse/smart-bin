@@ -27,6 +27,8 @@ import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
+import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.User;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -87,15 +89,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                   @Override
                                   public void onSuccess(AuthResult authResult) {
                                       DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-
-                                      reference.child("User").addValueEventListener(new ValueEventListener() {
+                                      String id = strEmail.replace("@","-");
+                                      id = id.replace(".","_");
+                                      reference.child("Users").child(id).addValueEventListener(new ValueEventListener() {
                                           @Override
                                           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                              if (dataSnapshot.getValue()!=null){
+                                                  //Data is valid
+                                                  User u = dataSnapshot.getValue(User.class);
+                                                  Session session = new Session(LoginActivity.this);
+                                                  session.setSession(u);
+                                                  Intent intent = new Intent(LoginActivity.this,DashBoard.class);
+                                                  startActivity(intent);
+                                                  finish();
+                                              }
+                                              else{
+                                                  LoginProgress.setVisibility(View.GONE);
+                                                  btnLogin.setVisibility(View.VISIBLE);
+                                                  helpers.showError(LoginActivity.this,"Login Failed","Somethng Went Wrong");
+                                              }
 
                                           }
 
                                           @Override
                                           public void onCancelled(@NonNull DatabaseError databaseError) {
+                                              LoginProgress.setVisibility(View.GONE);
+                                              btnLogin.setVisibility(View.VISIBLE);
+                                              helpers.showError(LoginActivity.this,"Login Failed","Something went wrong");
 
                                           }
                                       });

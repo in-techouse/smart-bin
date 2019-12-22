@@ -24,6 +24,7 @@ import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
+import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.User;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
@@ -88,8 +89,33 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
                                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                                    User user = new User();
-//                                    reference.child("Users").setValue
+                                    final User user = new User();
+                                    user.setFirstName(str1stName);
+                                    user.setLastName(str1stName);
+                                    user.setE_mail(strRegEmail);
+
+                                    String id = strRegEmail.replace("@","-");
+                                    id = id.replace(".","_");
+                                    user.setId(id);
+                                   reference.child("Users").child(id).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                       @Override
+                                       public void onSuccess(Void aVoid) {
+                                           Session session = new Session(RegistrationActivity.this);
+                                           session.setSession(user);
+                                           Intent intent = new Intent(RegistrationActivity.this,DashBoard.class);
+                                           startActivity(intent);
+                                           finish();
+
+                                       }
+                                   }).addOnFailureListener(new OnFailureListener() {
+                                       @Override
+                                       public void onFailure(@NonNull Exception e) {
+                                           RegistrationProgress.setVisibility(View.GONE);
+                                           btnRegister.setVisibility(View.VISIBLE);
+                                           helpers.showError(RegistrationActivity.this,"Registration Failed","Something Went wrong");
+
+                                       }
+                                   });
 //                                    RegistrationProgress.setVisibility(View.GONE);
 //                                    btnRegister.setVisibility(View.VISIBLE);
 //                                    Intent it = new Intent(RegistrationActivity.this,DashBoard.class);

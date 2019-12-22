@@ -46,6 +46,7 @@ dependencies {
 
     // Lottie Animation Library
     implementation 'com.airbnb.android:lottie:3.0.6'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
