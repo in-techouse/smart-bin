@@ -22,10 +22,17 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 
 import lcwu.fyp.smartbin.R;
+import lcwu.fyp.smartbin.director.Helpers;
+import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.User;
 
 public class DashBoard extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private Session session;
+    private Helpers helpers;
+    private User user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,12 @@ public class DashBoard extends AppCompatActivity {
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        session = new Session(DashBoard.this);
+        helpers = new Helpers();
+        user = session.getUser();
+
+
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(

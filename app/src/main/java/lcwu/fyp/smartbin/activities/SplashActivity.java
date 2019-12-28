@@ -8,6 +8,8 @@ import android.os.Bundle;
 import com.rbddevs.splashy.Splashy;
 
 import lcwu.fyp.smartbin.R;
+import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.User;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -16,12 +18,25 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+
         new Splashy.OnComplete() {
             @Override
             public void onComplete() {
-                Intent It = new Intent(SplashActivity.this,LoginActivity.class);
-                startActivity(It);
-                finish();
+                Session session = new Session(SplashActivity.this );
+                User user = session.getUser();
+                if(user == null){
+                    Intent It = new Intent(SplashActivity.this,LoginActivity.class);
+                    startActivity(It);
+                    finish();
+                }
+                else{
+                    Intent It = new Intent(SplashActivity.this,DashBoard.class);
+                    startActivity(It);
+                    finish();
+
+
+                }
+
             }
         }.onComplete();
 
