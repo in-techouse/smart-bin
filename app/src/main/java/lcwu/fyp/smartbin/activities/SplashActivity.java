@@ -1,12 +1,9 @@
 package lcwu.fyp.smartbin.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.rbddevs.splashy.Splashy;
-
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.User;

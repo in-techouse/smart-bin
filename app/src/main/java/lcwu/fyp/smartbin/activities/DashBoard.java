@@ -1,8 +1,6 @@
 package lcwu.fyp.smartbin.activities;
 
 import android.os.Bundle;
-
-import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -10,34 +8,17 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import android.provider.ContactsContract;
-import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
 import com.google.android.material.navigation.NavigationView;
-
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-import android.widget.Switch;
 import android.widget.TextView;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
