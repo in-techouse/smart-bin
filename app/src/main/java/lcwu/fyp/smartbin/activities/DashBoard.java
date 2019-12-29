@@ -2,10 +2,20 @@ package lcwu.fyp.smartbin.activities;
 
 import android.os.Bundle;
 
+import com.google.android.gms.common.internal.Constants;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.provider.ContactsContract;
+import android.provider.SyncStateContract;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -43,6 +53,9 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private TextView Profile_name;
     private TextView Profile_email;
     private DrawerLayout drawer;
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private NavigationView navigationView;
 
 
     @Override
@@ -57,7 +70,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         user = session.getUser();
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -69,6 +82,25 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
         Profile_name.setText(user.getFirstName() +" " + user.getLastName());
         Profile_email.setText(user.getE_mail());
+
+        mapView =findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+        try {
+            MapsInitializer.initialize(DashBoard.this);
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap gM) {
+                    Log.e("Maps","Call back received");
+                    googleMap =gM;
+                    LatLng defaultPosition= new LatLng(31.5204,74.3487);
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(defaultPosition).zoom(12).build();
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+            });
+        }
+        catch (Exception e){
+            helpers.showError(DashBoard.this, "Error", "Something Went Wrong try again");
+        }
     }
 
 
@@ -95,5 +127,29 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
         drawer.closeDrawer(GravityCompat.START);
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
     }
 }
