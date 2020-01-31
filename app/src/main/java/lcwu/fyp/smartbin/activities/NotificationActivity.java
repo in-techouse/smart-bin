@@ -65,6 +65,26 @@ public class NotificationActivity extends AppCompatActivity {
         reference.orderByChild("userId").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot d:dataSnapshot.getChildren()){
+                    Notification notification =d.getValue(Notification.class);
+                    if (notification!=null){
+                        data.add(notification);
+                    }
+
+                }
+                if (data.size()>0){
+                    notifications.setVisibility(View.VISIBLE);
+                    noNotification.setVisibility(View.GONE);
+
+
+                }
+                else{
+                    notifications.setVisibility(View.GONE);
+                    noNotification.setVisibility(View.VISIBLE);
+
+
+                }
+                loading.setVisibility(View.GONE);
 
             }
 

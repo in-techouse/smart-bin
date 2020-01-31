@@ -22,6 +22,7 @@ import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.Booking;
+import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
 public class BookingActivity extends AppCompatActivity {
@@ -62,6 +63,25 @@ public class BookingActivity extends AppCompatActivity {
         reference.orderByChild("userId").equalTo(user.getId()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot d:dataSnapshot.getChildren()){
+                    Booking booking =d.getValue(Booking.class);
+                    if (booking!=null){
+                        data.add(booking);
+                    }
+
+                }
+                if (data.size()>0){
+                    bookings.setVisibility(View.VISIBLE);
+                    noBooking.setVisibility(View.GONE);
+
+
+                }
+                else{
+                    bookings.setVisibility(View.GONE);
+                    noBooking.setVisibility(View.VISIBLE);
+
+                }
+                loading.setVisibility(View.GONE);
 
             }
 
