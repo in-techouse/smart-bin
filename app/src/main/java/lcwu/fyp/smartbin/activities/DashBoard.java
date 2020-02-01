@@ -1,5 +1,6 @@
 package lcwu.fyp.smartbin.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,14 +16,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
 public class DashBoard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +44,10 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private MapView mapView;
     private GoogleMap googleMap;
     private NavigationView navigationView;
+    private TextView locationAddress;
+    private LinearLayout searching;
+    private Button confirm;
+
 
 
     @Override
@@ -52,6 +63,12 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+
+        locationAddress = findViewById(R.id.locationAddress);
+        searching = findViewById(R.id.searching);
+        confirm = findViewById(R.id.confirm);
+
+
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -94,13 +111,25 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 break;
             }
             case R.id.nav_notification: {
+                Intent it = new Intent(DashBoard.this, NotificationActivity.class);
+                startActivity(it);
+
                 break;
             }
             case R.id.nav_onlinebooking: {
+                Intent it = new Intent(DashBoard.this,BookingActivity.class);
+                startActivity(it);
                 break;
 
             }
             case R.id.nav_logout:{
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                auth.signOut();
+                session.destroySession();
+                String packageContect;
+                Intent it= new Intent(DashBoard.this,LoginActivity.class);
+                startActivity(it);
+                finish();
                 break;
             }
         }
