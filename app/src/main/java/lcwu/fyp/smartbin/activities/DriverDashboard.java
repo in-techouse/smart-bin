@@ -2,6 +2,8 @@ package lcwu.fyp.smartbin.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,39 +21,57 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-
-import android.provider.Settings;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.view.GravityCompat;
-
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import android.provider.Settings;
+import android.provider.SyncStateContract;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.view.GravityCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.shreyaspatil.MaterialDialog.MaterialDialog;
 
 import androidx.drawerlayout.widget.DrawerLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.sql.Driver;
 import java.util.List;
+
+import javax.security.auth.login.LoginException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import lcwu.fyp.smartbin.R;
@@ -61,7 +81,9 @@ import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
-public class DashBoard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DriverDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private AppBarConfiguration mAppBarConfiguration;
 
     private Session session;
     private Helpers helpers;
@@ -73,24 +95,21 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private MapView mapView;
     private GoogleMap googleMap;
     private NavigationView navigationView;
-        private TextView locationAddress;
+    private TextView locationAddress;
     private LinearLayout searching;
     private Button confirm;
 
     private FusedLocationProviderClient locationProviderClient;
     private Marker marker;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dash_board);
+        setContentView(R.layout.activity_driver_dashboard);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        session = new Session(DashBoard.this);
+        session = new Session(DriverDashboard.this);
         helpers = new Helpers();
         user = session.getUser();
 
@@ -110,15 +129,16 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         Profile_image = hadder.findViewById(R.id.profile_image);
         Profile_name = hadder.findViewById(R.id.profile_name);
         Profile_email = hadder.findViewById(R.id.profile_email);
-        locationProviderClient = LocationServices.getFusedLocationProviderClient(DashBoard.this);
 
         Profile_name.setText(user.getFirstName() +" " + user.getLastName());
         Profile_email.setText(user.getE_mail());
 
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(DriverDashboard.this);
+
         mapView =findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         try {
-            MapsInitializer.initialize(DashBoard.this);
+            MapsInitializer.initialize(DriverDashboard.this);
             mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap gM) {
@@ -127,6 +147,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                     LatLng defaultPosition= new LatLng(31.5204,74.3487);
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(defaultPosition).zoom(12).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
 
                     View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
                     RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -140,14 +161,14 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
             });
         }
         catch (Exception e){
-            helpers.showError(DashBoard.this, "Error", "Something Went Wrong try again");
+            helpers.showError(DriverDashboard.this, "Error", "Something Went Wrong try again");
         }
     }
 
     private boolean askForPermission() {
-        if (ActivityCompat.checkSelfPermission(DashBoard.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(DashBoard.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(DashBoard.this, new String[]{
+        if (ActivityCompat.checkSelfPermission(DriverDashboard.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(DriverDashboard.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(DriverDashboard.this, new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 10);
             return false;
         }
@@ -161,7 +182,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
             googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
-                    FusedLocationProviderClient current = LocationServices.getFusedLocationProviderClient(DashBoard.this);
+                    FusedLocationProviderClient current = LocationServices.getFusedLocationProviderClient(DriverDashboard.this);
                     current.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                         public void onSuccess(Location location) {
                             getDeviceLocation();
@@ -185,17 +206,17 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
             } catch (Exception ex) {
                 Log.e("location" , "in getDevice location catch");
-                helpers.showError(DashBoard.this,  Constants.ERROR_SOMETHING_WENT_WRONG , ex.toString());
+                helpers.showError(DriverDashboard.this,  Constants.ERROR_SOMETHING_WENT_WRONG , ex.toString());
             }
             try {
                 network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             } catch (Exception ex) {
                 Log.e("location" , "in network Provider try");
-                helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG , ex.toString());
+                helpers.showError(DriverDashboard.this, Constants.ERROR_SOMETHING_WENT_WRONG , ex.toString());
 
             }
             if (!gps_enabled && !network_enabled) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(DashBoard.this);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(DriverDashboard.this);
                 dialog.setMessage("Oppsss.Your Location Service is off.\n Please turn on your Location and Try again Later");
                 dialog.setPositiveButton("Let me On", new DialogInterface.OnClickListener() {
                     @Override
@@ -226,7 +247,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                             marker = googleMap.addMarker(new MarkerOptions().position(me).title("You're Here")
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(me, 11));
-                            Geocoder geocoder = new Geocoder(DashBoard.this);
+                            Geocoder geocoder = new Geocoder(DriverDashboard.this);
                             List<Address> addresses = null;
                             Log.e("location" , "goint to try");
                             try {
@@ -244,7 +265,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                                 }
                             } catch (Exception exception) {
                                 Log.e("location" , "in getlastlocation catch");
-                                helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG , exception.toString());
+                                helpers.showError(DriverDashboard.this, Constants.ERROR_SOMETHING_WENT_WRONG , exception.toString());
                             }
                         }
                     }
@@ -253,12 +274,12 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.e("location" , "in get last location on failure");
-                    helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG , e.toString());
+                    helpers.showError(DriverDashboard.this, Constants.ERROR_SOMETHING_WENT_WRONG , e.toString());
                 }
             });
         } catch (Exception e) {
             Log.e("location" , "in outer catch of unknown");
-            helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG , e.toString());
+            helpers.showError(DriverDashboard.this, Constants.ERROR_SOMETHING_WENT_WRONG , e.toString());
         }
         listenToNotifications();
     }
@@ -302,7 +323,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     }
 
     private void showNotificationsDialog(final Notification notification) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(DashBoard.this, "1");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(DriverDashboard.this, "1");
         builder.setTicker("New Notification");
         builder.setAutoCancel(true);
         builder.setChannelId("1");
@@ -356,8 +377,6 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
 
 
-
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
@@ -366,14 +385,13 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 break;
             }
             case R.id.nav_notification: {
-//                Intent it = new Intent(DashBoard.this, NotificationActivity.class);
-                Intent it = new Intent(DashBoard.this, DriverDashboard.class);
+                Intent it = new Intent(DriverDashboard.this, NotificationActivity.class);
                 startActivity(it);
 
                 break;
             }
             case R.id.nav_onlinebooking: {
-                Intent it = new Intent(DashBoard.this,BookingActivity.class);
+                Intent it = new Intent(DriverDashboard.this,BookingActivity.class);
                 startActivity(it);
                 break;
 
@@ -382,7 +400,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 auth.signOut();
                 session.destroySession();
-                Intent it= new Intent(DashBoard.this,LoginActivity.class);
+                Intent it= new Intent(DriverDashboard.this,LoginActivity.class);
                 startActivity(it);
                 finish();
                 break;
@@ -417,4 +435,9 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         super.onPause();
         mapView.onPause();
     }
+
+
+
+
+
 }

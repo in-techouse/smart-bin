@@ -13,19 +13,23 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:fullBackupContent="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity
+            android:name=".activities.DriverDashboard"
+            android:label="@string/title_activity_driver_dashboard"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
 
-        <activity android:name=".activities.NotificationActivity"/>
+        <activity android:name=".activities.NotificationActivity" />
         <activity android:name=".activities.BookingActivity" />
         <activity
             android:name=".activities.UserProfileActivity"
