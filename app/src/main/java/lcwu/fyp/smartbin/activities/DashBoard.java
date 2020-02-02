@@ -41,6 +41,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,6 +56,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -58,6 +64,7 @@ import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Constants;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.Driver;
 import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
@@ -73,12 +80,15 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private MapView mapView;
     private GoogleMap googleMap;
     private NavigationView navigationView;
-        private TextView locationAddress;
+    private TextView locationAddress;
     private LinearLayout searching;
     private Button confirm;
+    private List <Driver> data;
 
     private FusedLocationProviderClient locationProviderClient;
     private Marker marker;
+
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Drivers");
 
 
 
@@ -171,8 +181,28 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 }
             });
             getDeviceLocation();
-//            getOnProviders();
+            getAllDrivers();
         }
+    }
+
+    private void getAllDrivers(){
+        data = new ArrayList<>();
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot d: dataSnapshot.getChildren()){
+                    Driver driver = d.getValue(Driver.class);
+                    if (driver!=null){
+                        data.add(driver);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
