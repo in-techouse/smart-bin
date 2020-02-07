@@ -3,9 +3,7 @@ package lcwu.fyp.smartbin.director;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
 import com.google.gson.Gson;
-
 import lcwu.fyp.smartbin.model.User;
 
 public class Session {

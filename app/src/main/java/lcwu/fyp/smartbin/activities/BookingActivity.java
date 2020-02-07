@@ -3,26 +3,21 @@ package lcwu.fyp.smartbin.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.Booking;
-import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
 public class BookingActivity extends AppCompatActivity {
