@@ -114,6 +114,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         Profile_email = hadder.findViewById(R.id.profile_email);
         locationProviderClient = LocationServices.getFusedLocationProviderClient(DashBoard.this);
 
+
         Profile_name.setText(user.getFirstName() +" " + user.getLastName());
         Profile_email.setText(user.getEmail());
 
