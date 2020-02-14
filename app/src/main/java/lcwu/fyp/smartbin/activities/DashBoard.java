@@ -57,7 +57,6 @@ import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Constants;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
-import lcwu.fyp.smartbin.model.Driver;
 import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
@@ -76,7 +75,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private TextView locationAddress;
     private LinearLayout searching;
     private Button confirm;
-    private List <Driver> data;
+    private List <User> data;
 
     private FusedLocationProviderClient locationProviderClient;
     private Marker marker;
@@ -116,7 +115,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         locationProviderClient = LocationServices.getFusedLocationProviderClient(DashBoard.this);
 
         Profile_name.setText(user.getFirstName() +" " + user.getLastName());
-        Profile_email.setText(user.getE_mail());
+        Profile_email.setText(user.getEmail());
 
         mapView =findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
@@ -184,7 +183,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()){
-                    Driver driver = d.getValue(Driver.class);
+                    User driver = d.getValue(User.class);
                     if (driver!=null){
                         data.add(driver);
                     }

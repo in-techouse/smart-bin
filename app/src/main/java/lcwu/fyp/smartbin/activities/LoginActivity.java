@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         go_to_forgetPasword.setOnClickListener(this);
 
         helpers = new Helpers();
-        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -91,10 +91,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                               if (dataSnapshot.getValue()!=null){
                                                   //Data is valid
                                                   User u = dataSnapshot.getValue(User.class);
+                                                  if( u == null){
+                                                      LoginProgress.setVisibility(View.GONE);
+                                                      btnLogin.setVisibility(View.VISIBLE);
+                                                      helpers.showError(LoginActivity.this,"Login Failed","Somethng Went Wrong");
+                                                      return;
+                                                  }
                                                   Session session = new Session(LoginActivity.this);
                                                   session.setSession(u);
-                                                  Intent intent = new Intent(LoginActivity.this,DashBoard.class);
-                                                  startActivity(intent);
+                                                  if(u.getType() == 0){
+                                                      Intent it = new Intent(LoginActivity.this, DashBoard.class);
+                                                      it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                      startActivity(it);
+                                                  }
+                                                  else{
+                                                      Intent intent = new Intent(LoginActivity.this, DriverDashboard.class);
+                                                      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                      startActivity(intent);
+                                                  }
                                                   finish();
                                               }
                                               else{
@@ -102,9 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                   btnLogin.setVisibility(View.VISIBLE);
                                                   helpers.showError(LoginActivity.this,"Login Failed","Somethng Went Wrong");
                                               }
-
                                           }
-
                                           @Override
                                           public void onCancelled(@NonNull DatabaseError databaseError) {
                                               LoginProgress.setVisibility(View.GONE);
@@ -144,7 +156,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean isValid(){
         boolean flag = true;
         if (strEmail.length() < 6 || !Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
-            edtEmail.setError("Enter a Valid email");
+            edtEmail.setError("Enter valid Email");
             flag = false;
         } else {
             edtEmail.setError(null);
@@ -152,18 +164,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
         if (strPasword.length() < 6) {
-            edtPasword.setError("Enter Valid pasword");
+            edtPasword.setError("Enter valid Password");
             flag = false;
         } else {
             edtPasword.setError(null);
         }
         return flag;
     }
-
-
-
-
-
-
 }
 

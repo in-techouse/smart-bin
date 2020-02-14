@@ -14,8 +14,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-
         new Splashy.OnComplete() {
             @Override
             public void onComplete() {
@@ -27,18 +25,20 @@ public class SplashActivity extends AppCompatActivity {
                     finish();
                 }
                 else{
-                    Intent It = new Intent(SplashActivity.this,DashBoard.class);
-                    startActivity(It);
+                    if(user.getType() == 0){
+                        Intent It = new Intent(SplashActivity.this, DashBoard.class);
+                        startActivity(It);
+                    }
+                    else{
+                        Intent It = new Intent(SplashActivity.this, DriverDashboard.class);
+                        startActivity(It);
+                    }
                     finish();
-
-
                 }
 
             }
         }.onComplete();
-
         setSplashy();
-
     }
 
     void setSplashy() {

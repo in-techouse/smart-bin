@@ -102,7 +102,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         Profile_email = hadder.findViewById(R.id.profile_email);
 
         Profile_name.setText(user.getFirstName() +" " + user.getLastName());
-        Profile_email.setText(user.getE_mail());
+        Profile_email.setText(user.getEmail());
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(DriverDashboard.this);
 

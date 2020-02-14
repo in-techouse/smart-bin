@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,9 +25,9 @@ import lcwu.fyp.smartbin.model.User;
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
     Helpers helpers;
     Button btnRegister;
-    String str1stName, strlastName, strRegEmail, strRegPasword, strConPasword;
+    String str1stName, strlastName, strRegEmail, strRegPasword, strConPasword, strPhone = "";
     TextView go_to_login;
-    EditText edt1stName, edtlastName, edtEmail, edtPasword, edtConPasword;
+    EditText edt1stName, edtlastName, edtEmail, edtPasword, edtConPasword, edtPhone;
     ProgressBar RegistrationProgress;
 
     @Override
@@ -42,6 +43,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         edtEmail = findViewById(R.id.edtEmail);
         edtPasword = findViewById(R.id.edtPasword);
         edtConPasword = findViewById(R.id.edtConPasword);
+        edtPhone = findViewById(R.id.edtPhone);
         RegistrationProgress = findViewById(R.id.RegistrationProgress);
 
         go_to_login = findViewById(R.id.go_to_login);
@@ -49,8 +51,6 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
         btnRegister.setOnClickListener(this);
         go_to_login.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -71,6 +71,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 strRegEmail = edtEmail.getText().toString();
                 strRegPasword = edtPasword.getText().toString();
                 strConPasword = edtConPasword.getText().toString();
+                strPhone = edtPhone.getText().toString();
 
                 boolean flag = isValid();
                 if (flag) {
@@ -85,8 +86,11 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                                     final User user = new User();
                                     user.setFirstName(str1stName);
-                                    user.setLastName(str1stName);
-                                    user.setE_mail(strRegEmail);
+                                    user.setLastName(strlastName);
+                                    user.setEmail(strRegEmail);
+                                    user.setPhoneNumber(strPhone);
+                                    user.setType(0);
+                                    user.setLicenseNumber("");
 
                                     String id = strRegEmail.replace("@","-");
                                     id = id.replace(".","_");
@@ -97,6 +101,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                            Session session = new Session(RegistrationActivity.this);
                                            session.setSession(user);
                                            Intent intent = new Intent(RegistrationActivity.this,DashBoard.class);
+                                           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                            startActivity(intent);
                                            finish();
 
@@ -134,42 +139,71 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private boolean isValid() {
         boolean flag = true;
         if (str1stName.length() < 3) {
-            edt1stName.setError("Enter a Valid 1stName");
+            edt1stName.setError("Enter valid name");
             flag = false;
         } else {
             edt1stName.setError(null);
 
         }
         if (strlastName.length() < 3) {
-            edtlastName.setError("Enter a Valid lastName");
+            edtlastName.setError("Enter valid name");
             flag = false;
-
-
         } else {
             edtlastName.setError(null);
         }
 
+        if (strPhone.length() != 11) {
+            edtPhone.setError("Enter valid phone number");
+            flag = false;
+        } else {
+            edtPhone.setError(null);
+        }
+
         if (strRegEmail.length() < 6 || !Patterns.EMAIL_ADDRESS.matcher(strRegEmail).matches()) {
-            edtEmail.setError("Enter a Valid RegEmail");
+            edtEmail.setError("Enter valid email");
             flag = false;
 
         } else {
             edtEmail.setError(null);
         }
         if (strRegPasword.length() < 6) {
-            edtPasword.setError("Enter Valid RegPasword");
+            edtPasword.setError("Enter valid password");
             flag = false;
 
         } else {
             edtPasword.setError(null);
         }
         if (strConPasword.length() < 6) {
-            edtConPasword.setError("Enter Valid ConPasword");
+            edtConPasword.setError("Enter valid password");
             flag = false;
 
         } else {
             edtConPasword.setError(null);
         }
+
+        if(strRegPasword.length() > 5 && strConPasword.length() > 5 && !strRegPasword.equals(strConPasword)){
+            edtConPasword.setError("Password does not match");
+            flag = false;
+        }
+        else{
+            edtConPasword.setError(null);
+        }
         return flag;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                break;
+            }
+        }
+        return true;
     }
 }

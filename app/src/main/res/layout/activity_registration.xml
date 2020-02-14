@@ -73,11 +73,23 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            app:passwordToggleEnabled="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <EditText
+                android:id="@+id/edtPhone"
+                android:inputType="phone"
+                android:hint="@string/enter_phone_number"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            app:passwordToggleEnabled="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/edtPasword"
                 android:inputType="textPassword"
@@ -106,6 +118,8 @@
 
 
         <Button
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
             android:padding="@dimen/textpadding"
             android:id="@+id/btnRegistration"
             android:background="@color/colorPrimaryDark"
