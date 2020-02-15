@@ -11,6 +11,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,7 +23,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+
+import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +41,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -47,20 +53,26 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Constants;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.Booking;
 import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
-public class DashBoard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DashBoard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener {
 
     private Session session;
     private Helpers helpers;
@@ -76,11 +88,32 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private LinearLayout searching;
     private Button confirm;
     private List <User> data;
+    private EditText wasteWeight;
+    private Editable wasteWeightValid;
+    private Boolean wasteFlag = false;
+    private CountDownTimer timer;
+    private ProgressBar sheetProgress;
+    private RelativeLayout mainSheet;
+    private BottomSheetBehavior sheetBehavior;
+    private double trashWeight;
+    private Booking activeBooking;
+    private DatabaseReference bookingReference = FirebaseDatabase.getInstance().getReference().child("Bookings");
+    private Button cancelBooking;
+
 
     private FusedLocationProviderClient locationProviderClient;
     private Marker marker;
 
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Drivers");
+    private DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("Users");
+    private ValueEventListener bookingListener, driverListener,bookingsListener;
+    private TextView driverName , driverAddress , driverDate , trashWeightDriver;
+    private CircleImageView driverImage;
+    private ValueEventListener driverValueListener;
+    private List<User> users;
+    private User activeDriver;
+
+
 
 
 
@@ -102,6 +135,28 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         locationAddress = findViewById(R.id.locationAddress);
         searching = findViewById(R.id.searching);
         confirm = findViewById(R.id.confirm);
+        wasteWeight = findViewById(R.id.wasteSize);
+        confirm = findViewById(R.id.confirm);
+        confirm.setOnClickListener(this);
+        LinearLayout layoutBottomSheet = findViewById(R.id.customer_bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        sheetProgress = findViewById(R.id.customer_sheetProgress);
+        mainSheet = findViewById(R.id.customer_mainSheet);
+
+        driverName = findViewById(R.id.driver_name);
+        driverAddress = findViewById(R.id.driver_bookingAddress);
+        driverDate = findViewById(R.id.driver_bookingDate);
+        trashWeightDriver = findViewById(R.id.trashWeight);
+        driverImage = findViewById(R.id.driverImage);
+        users = new ArrayList<>();
+
+        cancelBooking = findViewById(R.id.cancelDriverBooking);
+        cancelBooking.setOnClickListener(this);
+
+
+
+
 
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -175,6 +230,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
             });
             getDeviceLocation();
             getAllDrivers();
+            listenToBookingChanges();
         }
     }
 
@@ -388,8 +444,12 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
             case R.id.nav_home: {
                 break;
             }
+            case R.id.nav_profile: {
+                Intent in = new Intent(DashBoard.this , UserProfileActivity.class);
+                startActivity(in);
+                break;
+            }
             case R.id.nav_notification: {
-//                Intent it = new Intent(DashBoard.this, NotificationActivity.class);
                 Intent it = new Intent(DashBoard.this, DriverDashboard.class);
                 startActivity(it);
 
@@ -421,6 +481,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        removeAllDatabaseListeners();
     }
 
     @Override
@@ -440,4 +501,307 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         super.onPause();
         mapView.onPause();
     }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id){
+            case R.id.confirm : {
+
+                if (!helpers.isConnected(DashBoard.this)) {
+                    helpers.showError(DashBoard.this , "Connection Error" , "Check your Internet Connection");
+                    return;
+                }
+                wasteFlag = wasteValidater();
+                if(wasteFlag){
+                    searching.setVisibility(View.VISIBLE);
+                    confirm.setVisibility(View.GONE);
+//                    activeBooking = new Booking();
+                    final Booking booking = new Booking();
+                    String key = bookingReference.push().getKey();
+                    booking.setId(key);
+                    booking.setUserId(user.getId());
+                    booking.setPayment(50);
+                    booking.setPickup(locationAddress.getText().toString());
+                    booking.setDriverId("");
+                    booking.setStatus("New");
+                    booking.setLat(marker.getPosition().latitude);
+                    booking.setLng(marker.getPosition().longitude);
+                    Date d = new Date();
+                    String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
+                    booking.setStartTime(date);
+                    booking.setTrashWeightig(trashWeight);
+                    bookingReference.child(booking.getId()).setValue(booking).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            timer = new CountDownTimer(30000, 1000) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+                                    Log.e("Dashboard", "OnTick");
+                                }
+                                @Override
+                                public void onFinish() {
+                                    Log.e("Dashboard", "onFinish");
+                                    if(booking.getStatus().equals("New")){
+                                        booking.setStatus("Rejected");
+                                        bookingReference.child(booking.getId()).setValue(booking);
+                                        searching.setVisibility(View.GONE);
+                                        confirm.setVisibility(View.VISIBLE);
+                                        helpers.showError(DashBoard.this, "Service Error" ,  "No Service Provider Available Please Try Again Later!");
+                                    }else if (activeBooking.getStatus().equals("In Progress")){
+                                        searching.setVisibility(View.GONE);
+                                        confirm.setVisibility(View.VISIBLE);
+                                        mainSheet.setVisibility(View.VISIBLE);
+                                        showBottomSheet();
+                                    }
+                                }
+                            };
+                            timer.start();
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            helpers.showError(DashBoard.this , "Error" , "Something Went Wrong!");
+                        }
+                    });
+
+                }
+
+                break;
+            }
+            case R.id.cancelDriverBooking : {
+                Log.e("cancel" , "button clicked");
+                activeBooking.setStatus("Cancelled");
+                final Notification notification = new Notification();
+                final DatabaseReference notificationReference = FirebaseDatabase.getInstance().getReference().child("Notifications");
+                String nId = notificationReference.push().getKey();
+                notification.setId(nId);
+                notification.setBookingId(activeBooking.getId());
+                notification.setUserId(user.getPhoneNumber());
+                if(activeDriver!=null){
+                    Log.e("active driver" , "values "+activeDriver.getFirstName());
+
+                }else {                Log.e("active driver" , "active driver is null");
+                }
+                notification.setDriverId(activeDriver.getPhoneNumber());
+                notification.setRead(false);
+                Date d = new Date();
+                String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
+                notification.setDate(date);
+                notification.setDriverText("Your booking has been cancelled by " + user.getFirstName()+" "+user.getLastName());
+                notification.setUserText("You cancelled your booking with " + activeDriver.getFirstName()+" "+activeDriver.getLastName());
+                bookingReference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        notificationReference.child(notification.getId()).setValue(notification);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Booking" , "Booking cancellation failed");
+                    }
+                });
+
+                break;
+            }
+        }
+    }
+
+    Boolean wasteValidater(){
+        if(wasteWeight != null && wasteWeight.length() > 0){
+            wasteWeightValid = wasteWeight.getText();
+            trashWeight = Integer.parseInt(String.valueOf(wasteWeightValid));
+            if (trashWeight >= 10){
+                Log.e("waste" , "weight is ok");
+                wasteFlag = true;
+
+            }else{
+                wasteWeight.setError("weight must be greater then 10");
+                wasteFlag = false;
+            }
+        }else {
+            wasteWeight.setError("Waste weight cannot be empty");
+            wasteFlag = false;
+        }
+     return wasteFlag;
+    }
+
+    private void showBottomSheet(){
+        sheetBehavior.setHideable(false);
+        sheetBehavior.setSkipCollapsed(false);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    private void onInProgress(){
+        if (timer != null)
+            timer.cancel();
+
+        showBottomSheet();
+
+        searching.setVisibility(View.GONE);
+        confirm.setVisibility(View.VISIBLE);
+        mainSheet.setVisibility(View.GONE);
+        sheetProgress.setVisibility(View.VISIBLE);
+
+        bookingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Dashboard", "Booking Listener");
+                Booking booking = dataSnapshot.getValue(Booking.class);
+                Log.e("Dashboard", "Active Booking Updated");
+                if(booking != null && activeBooking != null){
+                    Log.e("Dashboard", "Active Booking Status: " + booking.getStatus());
+//                    Log.e("Dashboard", "Active Booking Fare: " + booking.get());
+                    switch (booking.getStatus()){
+                        case "Cancelled": {
+                            onBookingCancelled();
+                            break;
+                        }
+                        case "Completed": {
+                            onBookingCompleted();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        };
+        bookingReference.child(activeBooking.getId()).addValueEventListener(bookingListener);
+
+        driverListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Dashboard", "Driver Listener Captured");
+                if(activeDriver == null){
+                    userReference.removeEventListener(driverListener);
+                    Log.e("active driver" , "driver value before ");
+                    activeDriver = dataSnapshot.getValue(User.class);
+                    Log.e("active driver" , "driver value "+activeDriver.getFirstName());
+
+                    if(activeDriver != null) {
+                        //Fil bottomsshhet here
+                        driverName.setText(activeDriver.getFirstName()+" "+activeDriver.getLastName());
+                        driverDate.setText(activeBooking.getStartTime());
+                        driverAddress.setText(activeBooking.getPickup());
+                        trashWeightDriver.setText(activeBooking.getTrashWeightig()+"");
+                        if (activeDriver.getImage() != null && activeDriver.getImage().length() > 1) {
+                            Glide.with(getApplicationContext()).load(activeDriver.getImage()).into(driverImage);
+                        }
+                        else {
+                            driverImage.setImageResource(R.drawable.profile);
+                        }
+                    }
+                }
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        };
+
+        userReference.child(activeBooking.getDriverId()).addValueEventListener(driverListener);
+    }
+
+    private void onBookingCancelled(){
+        bookingReference.child(activeBooking.getId()).removeEventListener(bookingListener);
+        removeListeners();
+        helpers.showError(DashBoard.this, "Booking Info" ,  "Your booking has been cancelled.");
+//        helpers.sendNotification(DashboardActivity.this, "BOOKING", "Your booking has been cancelled.");
+    }
+
+    private void onBookingCompleted(){
+        bookingReference.child(activeBooking.getId()).removeEventListener(bookingListener);
+        removeListeners();
+        helpers.showError(DashBoard.this, "Booking Info" ,  "Your Booking has been marked as completed.");
+    }
+
+    private void removeListeners(){
+        removeAllDatabaseListeners();
+        sheetBehavior.setHideable(true);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        getOnProviders();
+        listenToBookingChanges();
+        activeBooking = null;
+    }
+
+    private void removeAllDatabaseListeners(){
+        if(bookingListener != null){
+            bookingReference.removeEventListener(bookingListener);
+        }
+        if(bookingsListener != null){
+            bookingReference.removeEventListener(bookingsListener);
+        }
+        if(driverValueListener!= null){
+            userReference.removeEventListener(driverValueListener);
+        }
+        if(driverListener != null){
+            userReference.removeEventListener(driverListener);
+        }
+    }
+
+    private void listenToBookingChanges(){
+        bookingsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Dashboard", "Bookings Listener");
+                for (DataSnapshot d: dataSnapshot.getChildren()){
+                    Log.e("Dashboard", "DataSnapShot Each Child: " + d.toString());
+                    Booking booking = d.getValue(Booking.class);
+                    if(booking != null){
+                        Log.e("Dashboard", "Booking Status: " + booking.getStatus());
+                        if (booking.getStatus().equals("In Progress")) {
+                            Log.e("Dashboard", "Booking Status In Progress Found");
+                            activeBooking = booking;
+                            bookingReference.removeEventListener(bookingsListener);
+                            if(driverListener != null){
+                                userReference.removeEventListener(driverListener);
+                            }
+                            Log.e("Dashboard", "Bookings Listener Removed");
+                            googleMap.clear();
+                            getDeviceLocation();
+                            onInProgress();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        };
+        bookingReference.orderByChild("userId").equalTo(user.getId()).addValueEventListener(bookingsListener);
+    }
+
+    private void getOnProviders() {
+        driverValueListener = userReference.orderByChild("type").equalTo(1).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    User u = data.getValue(User.class);
+                    if (u != null && activeBooking != null) {
+                        LatLng user_location = new LatLng(u.getLatitude(), u.getLongitude());
+                        MarkerOptions markerOptions = new MarkerOptions().position(user_location).title("Drivers");
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.profile));
+                        Marker marker = googleMap.addMarker(markerOptions);
+                        marker.showInfoWindow();
+                        marker.setTag(u);
+                        users.add(u);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                helpers.showError(DashBoard.this,"Error", Constants.ERROR_SOMETHING_WENT_WRONG);
+            }
+        });
+
+    }
+
+
+
+
 }

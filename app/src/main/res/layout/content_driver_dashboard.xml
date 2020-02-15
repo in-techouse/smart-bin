@@ -60,12 +60,6 @@
         android:background="@color/colorWhite"
         android:layout_alignParentBottom="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/colorWhite"
-            android:padding="8dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,13 +81,5 @@
                     android:layout_gravity="center"/>
 
             </LinearLayout>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CONFIRM"
-                android:id="@+id/confirm"/>
-
-        </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

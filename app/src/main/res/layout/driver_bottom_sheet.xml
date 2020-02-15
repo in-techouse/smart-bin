@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/driver_bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="340dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="340dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:padding="7dp">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/driver_sheetProgress"
+            android:layout_gravity="center"/>
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/driver_mainSheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_height="94dp"
+                android:layout_width="94dp"
+                android:id="@+id/driver_Image"
+                android:src="@drawable/profile"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#000000">
+            </de.hdodenhof.circleimageview.CircleImageView>
+
+            <TextView
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/driver_Image"
+                android:layout_width="match_parent"
+                android:id="@+id/driverName"
+                android:layout_height="wrap_content"
+                android:text="Order Details"
+                android:textColor="#444"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_below="@id/driverName"
+                android:layout_marginStart="10dp"
+                android:layout_width="match_parent"
+                android:layout_toEndOf="@+id/driver_Image"
+                android:id="@+id/providerCategory"
+                android:layout_height="wrap_content"
+                android:text="Order Details"
+                android:textColor="#444"
+                android:textSize="17dp" />
+
+            <TextView
+                android:layout_below="@id/providerCategory"
+                android:layout_marginStart="10dp"
+                android:layout_width="match_parent"
+                android:layout_toEndOf="@+id/driver_Image"
+                android:id="@+id/customerEmail"
+                android:layout_height="wrap_content"
+                android:text="Order Details"
+                android:textColor="#444"
+                android:textSize="15dp" />
+
+            <LinearLayout
+                android:layout_below="@id/driver_Image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="match_parent"
+                    android:id="@+id/driver_bookingAddress"
+                    android:layout_height="wrap_content"
+                    android:text="Booking Address"
+                    android:textColor="#444"
+                    android:textSize="15dp" />
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_centerVertical="true"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Booking Date"
+                        android:textColor="#444"
+                        android:textSize="13dp" />
+                    <TextView
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/driver_bookingDate"
+                        android:layout_height="wrap_content"
+                        android:text="Booking Date"
+                        android:textColor="#444"
+                        android:textSize="13dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_centerVertical="true"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fare"
+                        android:textColor="#444"
+                        android:textSize="13dp" />
+                    <TextView
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/bookingFare"
+                        android:layout_height="wrap_content"
+                        android:text="0 RS"
+                        android:textColor="#444"
+                        android:textSize="13dp" />
+                </RelativeLayout>
+
+                <Button
+
+                    android:background="@color/colorReject"
+                    android:layout_marginTop="13dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cancelBooking"
+                    android:text="Cancel Booking"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
+                <Button
+                    android:background="@color/colorAccept"
+                    android:layout_marginTop="13dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/completeBooking"
+                    android:text="MARK COMPLETE"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

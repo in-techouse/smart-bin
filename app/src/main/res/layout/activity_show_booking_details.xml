@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ShowBookingDetails">
+
+
+    <com.google.android.gms.maps.MapView
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorTextWhite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:cardElevation="20dp"
+        app:cardCornerRadius="13dp">
+
+        <LinearLayout
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress"
+            android:orientation="vertical"
+            android:padding="11dp"
+            android:layout_margin="11dp">
+            <ProgressBar
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@color/colorTextWhite"
+            android:layout_width="match_parent"
+            android:id="@+id/main"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/profile"
+                    android:id="@+id/userImage" />
+                <TextView
+                    android:id="@+id/userNameLabel"
+                    android:layout_toEndOf="@id/userImage"
+                    android:textStyle="bold"
+                    android:text="User Name"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp" />
+                <TextView
+                    android:layout_below="@id/userNameLabel"
+                    android:layout_toEndOf="@id/userImage"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:id="@+id/userName"/>
+            </RelativeLayout>
+
+            <TextView
+                android:textStyle="bold"
+                android:text="User Location"
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mp3"
+                android:layout_marginBottom="@dimen/mp3" />
+            <TextView
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mp3"
+                android:layout_marginBottom="@dimen/mp3"
+                android:id="@+id/address"/>
+            <TextView
+                android:textStyle="bold"
+                android:text="Your Location"
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mp3"
+                android:layout_marginBottom="@dimen/mp3" />
+            <TextView
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mp3"
+                android:layout_marginBottom="@dimen/mp3"
+                android:id="@+id/your_address"/>
+            <RelativeLayout
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estimated Travel"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Travel"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:id="@+id/buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <Button
+                    android:layout_margin="3dp"
+                    android:background="@color/colorReject"
+                    android:textColor="@color/colorTextWhite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/reject"
+                    android:text="Reject"/>
+                <Button
+                    android:layout_margin="3dp"
+                    android:background="@color/colorAccept"
+                    android:textColor="@color/colorTextWhite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/accept"
+                    android:text="Accept"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

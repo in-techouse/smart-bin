@@ -21,6 +21,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_driver_dashboard" />
+    <include layout="@layout/driver_bottom_sheet"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

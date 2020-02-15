@@ -20,18 +20,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-
+        <activity android:name=".activities.ShowBookingDetails"></activity>
         <activity
             android:name=".activities.DriverDashboard"
             android:label="@string/title_activity_driver_dashboard"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
 
-        <activity android:name=".activities.NotificationActivity" android:parentActivityName=".activities.DashBoard"/>
-        <activity android:name=".activities.BookingActivity" android:parentActivityName=".activities.DashBoard"/>
+        <activity
+            android:name=".activities.NotificationActivity"
+            android:parentActivityName=".activities.DashBoard" />
+        <activity
+            android:name=".activities.BookingActivity"
+            android:parentActivityName=".activities.DashBoard" />
         <activity
             android:name=".activities.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
@@ -40,9 +44,13 @@
             android:name=".activities.DashBoard"
             android:label="@string/title_activity_dash_board"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.ForgetPaswordActivity" android:parentActivityName=".activities.LoginActivity"/>
+        <activity
+            android:name=".activities.ForgetPaswordActivity"
+            android:parentActivityName=".activities.LoginActivity" />
         <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.RegistrationActivity" android:parentActivityName=".activities.LoginActivity"/>
+        <activity
+            android:name=".activities.RegistrationActivity"
+            android:parentActivityName=".activities.LoginActivity" />
         <activity android:name=".activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

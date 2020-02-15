@@ -8,10 +8,113 @@
     tools:context=".activities.UserProfileActivity"
     tools:showIn="@layout/activity_user_profile">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:background="@color/colorPrimary"
+            android:textSize="@dimen/textsize"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:padding="@dimen/textpadding"
+            android:text="@string/profile_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/profileFirstName"
+                android:inputType="textPersonName"
+                android:hint="First Name"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <EditText
+                android:id="@+id/profileLastName"
+                android:inputType="textPersonName"
+                android:hint="Last Name"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:focusable="false"
+                android:clickable="false"
+                android:id="@+id/profileEmail"
+                android:inputType="textEmailAddress"
+                android:hint="@string/e_mail"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:focusable="false"
+                android:clickable="false"
+                android:id="@+id/profilePhone"
+                android:inputType="phone"
+                android:hint="phone_number"
+                android:padding="@dimen/textpadding"
+                android:layout_margin="@dimen/textsize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <Button
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:padding="@dimen/textpadding"
+            android:id="@+id/btnUpdation"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize"
+            android:textAlignment="center"
+            android:text="@string/update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/updationProgress"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
 
 </androidx.core.widget.NestedScrollView>

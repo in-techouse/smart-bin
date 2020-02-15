@@ -50,6 +50,7 @@
 
     </androidx.cardview.widget.CardView>
 
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,6 +68,34 @@
             android:orientation="vertical"
             android:background="@color/colorWhite"
             android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/wasteLayout"
+                android:background="@color/colorWhite"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/wasteText"
+                    android:textSize="20dp"
+                    android:text="Enter weight of waste">
+                </TextView>
+                <EditText
+                    android:textSize="15dp"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="waste must be greater then 10"
+                    android:id="@+id/wasteSize">
+                </EditText>
+
+            </LinearLayout>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

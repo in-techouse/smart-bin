@@ -2,15 +2,20 @@ package lcwu.fyp.smartbin.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,25 +42,39 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.ui.AppBarConfiguration;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.shreyaspatil.MaterialDialog.MaterialDialog;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Constants;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
+import lcwu.fyp.smartbin.model.Booking;
 import lcwu.fyp.smartbin.model.Notification;
 import lcwu.fyp.smartbin.model.User;
 
-public class DriverDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DriverDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private Session session;
     private Helpers helpers;
     private User user;
@@ -69,6 +88,18 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
     private TextView locationAddress;
     private LinearLayout searching;
     private Button confirm;
+    private ProgressBar sheetProgress;
+    private RelativeLayout mainSheet;
+    private BottomSheetBehavior sheetBehavior;
+    private Booking activeBooking;
+    private User activeCustomer;
+    private CircleImageView customerImage;
+    private TextView customerName, trashWeight,customerContact , customerEmail, bookingDate, bookingAddress;
+    private ValueEventListener bookingsValueEventListener, userValueEventListener, bookingValueEventListener;
+    private DatabaseReference bookingReference = FirebaseDatabase.getInstance().getReference().child("Bookings");
+    private DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
+
 
     private FusedLocationProviderClient locationProviderClient;
     private Marker marker;
@@ -90,6 +121,30 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         locationAddress = findViewById(R.id.locationAddress);
         searching = findViewById(R.id.searching);
         confirm = findViewById(R.id.confirm);
+
+        LinearLayout layoutBottomSheet = findViewById(R.id.driver_bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        sheetProgress = findViewById(R.id.driver_sheetProgress);
+        mainSheet = findViewById(R.id.driver_mainSheet);
+
+        customerName = findViewById(R.id.driverName);
+        customerImage = findViewById(R.id.driverImage);
+        bookingAddress = findViewById(R.id.driver_bookingAddress);
+        bookingDate = findViewById(R.id.driver_bookingDate);
+        trashWeight = findViewById(R.id.bookingFare);
+        customerEmail = findViewById(R.id.customerEmail);
+
+        Button completeBooking = findViewById(R.id.completeBooking);
+        Button cancelBooking = findViewById(R.id.cancelBooking);
+
+        completeBooking.setOnClickListener(this);
+        cancelBooking.setOnClickListener(this);
+
+
+
+
+
 
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -163,6 +218,8 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 }
             });
             getDeviceLocation();
+            sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            listenToBookings();
 //            getOnProviders();
         }
     }
@@ -355,6 +412,12 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
             case R.id.nav_home: {
                 break;
             }
+            case R.id.nav_profile: {
+                Intent in  = new Intent(DriverDashboard.this , UserProfileActivity.class);
+                startActivity(in);
+                break;
+            }
+
             case R.id.nav_notification: {
                 Intent it = new Intent(DriverDashboard.this, NotificationActivity.class);
                 startActivity(it);
@@ -407,8 +470,279 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         mapView.onPause();
     }
 
+    private void listenToBookings() {
+        Log.e("VendorDashboard" , "in func");
+        bookingsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data:dataSnapshot.getChildren()){
+                    Log.e("VendorDashboard", "Bookings Listener DataSnapshot: " + data.toString());
+                    final Booking booking = data.getValue(Booking.class);
+                    if(booking != null && booking.getDriverId() != null ){
+                        Log.e("VendorDashboard", "Booking Status: " + booking.getStatus());
+                        if(booking.getStatus().equals("In Progress")){
+                            bookingReference.removeEventListener(bookingsValueEventListener);
+                            Log.e("VendorDashboard" , "Booking status in Progress found");
+                            activeBooking = booking;
+                            sheetBehavior.setHideable(false);
+                            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                            loadCustomerDetails();
+                        }
+                        else if (booking.getDriverId().length() < 1 && booking.getStatus().equals("New")) {
+                            showBookingDialog(booking);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("VendorDashboard" , "in onCancelled "+databaseError.toString());
+            }
+        };
+        bookingReference.addValueEventListener(bookingsValueEventListener);
+    }
+
+    private void loadCustomerDetails(){
+        Log.e("VendorDashboard", "Call Received to Load Customer");
+        sheetProgress.setVisibility(View.VISIBLE);
+        mainSheet.setVisibility(View.GONE);
+        userValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userReference.removeEventListener(userValueEventListener);
+                if(activeCustomer == null) {
+                    Log.e("VendorDashboard", "User Value Received, on Data Changed: " + dataSnapshot.toString());
+                    activeCustomer = dataSnapshot.getValue(User.class);
+                    if (activeCustomer != null) {
+                        if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 1) {
+                            Log.e("VendorDashboard", "Active Customer Image Found");
+//                            Glide.with(getApplicationContext()).load(activeCustomer.getImage()).into(customerImage);
+                        }
+                        Log.e("VendorDashboard", "Active Customer Detail set, Id: " + activeCustomer.getId());
+                        Log.e("VendorDashboard", "Active Customer Detail set, Name: " + activeCustomer.getFirstName() + " Contact: " + activeCustomer.getPhoneNumber());
+                        Log.e("VendorDashboard", "Active Customer Detail set, Image: " + activeCustomer.getImage() + " Email: " + activeCustomer.getEmail());
+                        customerName.setText(activeCustomer.getFirstName()+" "+activeCustomer.getLastName());
+//                        customerContact.setText(activeCustomer.getPhoneNumber()+"");
+                        customerEmail.setText(activeCustomer.getEmail());
+                        bookingDate.setText(activeBooking.getStartTime());
+                        bookingAddress.setText(activeBooking.getPickup());
+                        trashWeight.setText(activeBooking.getTrashWeightig()+"");
+                    }
+                }
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                userReference.removeEventListener(userValueEventListener);
+                Log.e("VendorDashboard", "User Value Received, on Cancelled: " + databaseError.getMessage());
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+            }
+        };
+        userReference.child(activeBooking.getUserId()).addValueEventListener(userValueEventListener);
+        listenToActiveBookingChange();
+    }
+
+    private void showBookingDialog(final Booking booking){
+        Log.e("show Booking" , "in funtion start");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(DriverDashboard.this, "1");
+        builder.setTicker("New Booking");
+        builder.setAutoCancel(true);
+        builder.setChannelId("1");
+        builder.setContentInfo("New Booking Found.");
+        builder.setContentTitle("New Booking Found.");
+        builder.setContentText("We have a new booking for you. It's time to get some revenue.");
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+        builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+        builder.build();
+        //make another activity to show bookings details
+        Log.e("show Booking" , "Going to start another activity");
+        Intent notificationIntent = new Intent(DriverDashboard.this, ShowBookingDetails.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Booking", booking);
+        notificationIntent.putExtras(bundle);
+        PendingIntent conPendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(conPendingIntent);
+        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager != null) {
+            manager.notify(10,builder.build());
+        }
+
+        final MaterialDialog dialog = new MaterialDialog.Builder(DriverDashboard.this)
+                .setTitle("NEW BOOKING")
+                .setMessage("A NEW BOOKING HAS ARRIVED, DO YOU WANT TO EARN SOME MORE PROFIT?")
+                .setCancelable(false)
+                .setPositiveButton("DETAILS", new MaterialDialog.OnClickListener() {
+                    @Override
+                    public void onClick(com.shreyaspatil.MaterialDialog.interfaces.DialogInterface dialogInterface, int which) {
+                        dialogInterface.dismiss();
+                        Log.e("booking" , "going to start in positive click");
+                        Intent it = new Intent(DriverDashboard.this, ShowBookingDetails.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("Booking",booking);
+                        it.putExtras(bundle);
+                        startActivity(it);
+                    }
+                })
+                .setNegativeButton("REJECT", new MaterialDialog.OnClickListener() {
+                    @Override
+                    public void onClick(com.shreyaspatil.MaterialDialog.interfaces.DialogInterface dialogInterface, int which) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .build();
+        // Show Dialog
+        dialog.show();
+    }
+
+    private void listenToActiveBookingChange(){
+        bookingValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("VendorDashboard", "Booking Listener: " + dataSnapshot.toString());
+                Booking booking = dataSnapshot.getValue(Booking.class);
+                if(booking != null && activeBooking != null){
+                    switch (booking.getStatus()){
+                        case "Cancelled":{
+                            Log.e("VendorDashboard", "Booking Cancelled");
+                            activeBooking = booking;
+                            showCancelledNotification();
+                            break;
+                        }
+                        case "Completed": {
+                            Log.e("VendorDashboard", "Booking Completed");
+                            activeBooking = booking;
+                            showCompletedNotification();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        };
+
+        bookingReference.child(activeBooking.getId()).addValueEventListener(bookingValueEventListener);
+    }
 
 
 
+    private void showCompletedNotification(){
+        helpers.showError(DriverDashboard.this, "Booking Completed", "Your booking has been Completed.");
+        helpers.showError(DriverDashboard.this, "Booking Completed", "Your booking with " + activeCustomer.getFirstName() +" has been Completed.");
+        sheetBehavior.setHideable(true);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        activeBooking = null;
+    }
 
+
+    private void showCancelledNotification(){
+        bookingReference.removeEventListener(bookingValueEventListener);
+        helpers.showError(DriverDashboard.this, "Booking Cancelled", "Your booking has been cancelled.");
+        helpers.showError(DriverDashboard.this, "Booking Cancelled", "Your booking with " + activeCustomer.getFirstName() +" has been cancelled.");
+        sheetBehavior.setHideable(true);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        activeBooking = null;
+        listenToBookings();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id){
+            case R.id.completeBooking:{
+                onBookingCompleted();
+                break;
+            }
+            case R.id.cancelBooking:{
+                onBookingCancelled();
+                break;
+            }
+        }
+    }
+
+    private void onBookingCompleted(){
+        sheetProgress.setVisibility(View.VISIBLE);
+        mainSheet.setVisibility(View.GONE);
+        activeBooking.setStatus("Completed");
+        final Notification notification = new Notification();
+        final DatabaseReference notificationReference = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        String id = notificationReference.push().getKey();
+        notification.setId(id);
+        notification.setBookingId(activeBooking.getId());
+        notification.setUserId(activeCustomer.getPhoneNumber());
+        notification.setDriverId(user.getPhoneNumber());
+        notification.setRead(false);
+        Date d = new Date();
+        String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
+        notification.setDate(date);
+        notification.setDriverText("You completed the booking of " + activeCustomer.getFirstName());
+        notification.setUserText("Your booking has been completed by " + user.getFirstName());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Bookings");
+        reference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                notificationReference.child(notification.getId()).setValue(notification);
+                sheetBehavior.setHideable(true);
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+                sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+                helpers.showError(DriverDashboard.this, "ERROR", "Something went wrong.");
+            }
+        });
+    }
+
+    private void onBookingCancelled(){
+        sheetProgress.setVisibility(View.VISIBLE);
+        mainSheet.setVisibility(View.GONE);
+        activeBooking.setStatus("Cancelled");
+        final Notification notification = new Notification();
+        final DatabaseReference notificationReference = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        String id = notificationReference.push().getKey();
+        notification.setId(id);
+        notification.setBookingId(activeBooking.getId());
+        notification.setUserId(activeCustomer.getPhoneNumber());
+        notification.setDriverId(user.getPhoneNumber());
+        notification.setRead(false);
+        Date d = new Date();
+        String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
+        notification.setDate(date);
+        notification.setDriverText("You cancelled the booking of " + activeCustomer.getFirstName());
+        notification.setUserText("Your booking has been cancelled by " + user.getFirstName());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Bookings");
+        reference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                notificationReference.child(notification.getId()).setValue(notification);
+                sheetBehavior.setHideable(true);
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+                sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                sheetProgress.setVisibility(View.GONE);
+                mainSheet.setVisibility(View.VISIBLE);
+                helpers.showError(DriverDashboard.this, "ERROR", "Something went wrong.");
+            }
+        });
+    }
+
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
 }
