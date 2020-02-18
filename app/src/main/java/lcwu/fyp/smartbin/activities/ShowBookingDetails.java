@@ -154,34 +154,75 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void loaduserdata(){
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(booking.getUserId());
-        reference.addValueEventListener(new ValueEventListener() {
+    private void loadUserData(){
+        userListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                databaseReference.removeEventListener(userListener);
                 if (dataSnapshot.getValue()!=null){
                     customer = dataSnapshot.getValue(User.class);
                     if (customer!=null){
-                        UserName.setText(customer.getFirstName()+" "+customer.getLastName());
+                        main.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
+                        UserName.setText(customer.getFirstName());
                         if(customer.getImage() != null && user.getImage().length() > 0){
-                            Glide.with(ShowBookingDetails.this).load(customer.getImage()).into(userImage);
+                            Glide.with(getApplicationContext()).load(customer.getImage()).into(userImage);
                         }
                     }
                     else{
                         UserName.setText("");
+                        main.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
                     }
                 }
                 else{
                     UserName.setText("");
+                    main.setVisibility(View.VISIBLE);
+                    progress.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                databaseReference.removeEventListener(userListener);
+                UserName.setText("");
+                main.setVisibility(View.VISIBLE);
+                progress.setVisibility(View.GONE);
             }
-        });
+        };
+
+        databaseReference.child("Users").child(booking.getUserId()).addValueEventListener(userListener);
     }
+
+
+//    private void loaduserdata(){
+//
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(booking.getUserId());
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue()!=null){
+//                    customer = dataSnapshot.getValue(User.class);
+//                    if (customer!=null){
+//                        UserName.setText(customer.getFirstName()+" "+customer.getLastName());
+//                        if(customer.getImage() != null && user.getImage().length() > 0){
+//                            Glide.with(ShowBookingDetails.this).load(customer.getImage()).into(userImage);
+//                        }
+//                    }
+//                    else{
+//                        UserName.setText("");
+//                    }
+//                }
+//                else{
+//                    UserName.setText("");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//            }
+//        });
+//    }
     private boolean askForPermission(){
         if (ActivityCompat.checkSelfPermission(ShowBookingDetails.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(ShowBookingDetails.this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -275,7 +316,8 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                                     }
                                     YourAddress.setText(strAddress);
                                 }
-                                loaduserdata();
+//                                loaduserdata();
+                                loadUserData();
                                 user_address.setText(booking.getPickup());
 //                                fare.setText(booking.getFare()+"+ Rs");
 
@@ -394,10 +436,10 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
         notification.setDriverId(user.getPhoneNumber());
         notification.setRead(false);
         Date d = new Date();
-        String date = new SimpleDateFormat("EEE DD, MMM, yyyy HH:mm").format(d);
+        String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
         notification.setDate(date);
-        notification.setDriverText("You accepted the booking of " + customer.getFirstName());
-        notification.setUserText("Your booking has been accepted by " + user.getFirstName());
+        notification.setDriverText("You accepted the booking of " + customer.getFirstName()+" "+customer.getLastName());
+        notification.setUserText("Your booking has been accepted by " + user.getFirstName()+" "+user.getLastName());
         notificationReference.child(notification.getId()).setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

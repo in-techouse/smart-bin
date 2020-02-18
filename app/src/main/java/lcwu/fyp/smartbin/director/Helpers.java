@@ -1,9 +1,14 @@
 package lcwu.fyp.smartbin.director;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.provider.Settings;
+
+import androidx.core.app.NotificationCompat;
+
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
 import lcwu.fyp.smartbin.R;
@@ -61,6 +66,24 @@ public class Helpers {
 
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
+    }
+
+    public void showNotification(Activity activity, String text, String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(activity, "1");
+        builder.setTicker(text);
+        builder.setAutoCancel(true);
+        builder.setChannelId("1");
+        builder.setContentInfo(text);
+        builder.setContentTitle(text);
+        builder.setContentText(message);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+        builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+        builder.build();
+        NotificationManager manager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager != null) {
+            manager.notify(10, builder.build());
+        }
     }
 
 }

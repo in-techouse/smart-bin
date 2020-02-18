@@ -10,11 +10,15 @@ public class Booking implements Serializable
     private String pickup , status , driverId;
     private double trashWeightig , lat , lng;
     private int payment;
+    private int amountCharged;
+    private double trashWeight;
+
+
 
     public Booking() {
     }
 
-    public Booking(String id, String userId, String startTime, String pickup, double trashWeightig, int payment , String status , String driverId , double lat , double lng) {
+    public Booking(String id, String userId, String startTime, String pickup, double trashWeightig, int payment , String status , String driverId , double lat , double lng , int amountCharged ,double trashWeight) {
         this.id = id;
         this.userId = userId;
         this.startTime = startTime;
@@ -25,6 +29,8 @@ public class Booking implements Serializable
         this.driverId = driverId;
         this.lat = lat;
         this.lng = lng;
+        this.amountCharged = amountCharged;
+        this.trashWeight = trashWeight;
     }
 
     public String getId() {
@@ -59,28 +65,13 @@ public class Booking implements Serializable
         this.pickup = pickup;
     }
 
-    public double getTrashWeightig() {
-        return trashWeightig;
-    }
 
-    public void setTrashWeightig(double trashWeightig) {
-        this.trashWeightig = trashWeightig;
-    }
-
-    public int getPayment() {
-        return payment;
-    }
-
-    public void setPayment(int payment) {
-        this.payment = payment;
-    }
-    public String getStatus() {
-        return status;
-    }
 
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getStatus(){return status;}
 
     public String getDriverId() {
         return driverId;
@@ -105,6 +96,17 @@ public class Booking implements Serializable
     public void setLng(double lng) {
         this.lng = lng;
     }
+    public int getAmountCharged() {
+        return amountCharged;
+    }
+
+    public void setAmountCharged(int amountCharged) {
+        this.amountCharged = amountCharged;
+    }
+
+    public double getTrashWeight(){return  trashWeight;}
+
+    public void setTrashWeight(double traashWeight){ this.trashWeight = traashWeight;}
 
 
 }

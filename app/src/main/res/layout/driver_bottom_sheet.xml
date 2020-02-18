@@ -59,14 +59,14 @@
                 android:layout_marginStart="10dp"
                 android:layout_width="match_parent"
                 android:layout_toEndOf="@+id/driver_Image"
-                android:id="@+id/providerCategory"
+                android:id="@+id/customerPhone"
                 android:layout_height="wrap_content"
                 android:text="Order Details"
                 android:textColor="#444"
                 android:textSize="17dp" />
 
             <TextView
-                android:layout_below="@id/providerCategory"
+                android:layout_below="@id/customerPhone"
                 android:layout_marginStart="10dp"
                 android:layout_width="match_parent"
                 android:layout_toEndOf="@+id/driver_Image"
@@ -80,6 +80,7 @@
                 android:layout_below="@id/driver_Image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/contentLayout"
                 android:orientation="vertical">
 
                 <TextView
@@ -122,16 +123,17 @@
                     <TextView
                         android:layout_centerVertical="true"
                         android:textStyle="bold"
+                        android:id="@+id/trashText"
                         android:layout_alignParentStart="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fare"
+                        android:text="TrashWeight"
                         android:textColor="#444"
                         android:textSize="13dp" />
                     <TextView
                         android:layout_alignParentEnd="true"
                         android:layout_width="wrap_content"
-                        android:id="@+id/bookingFare"
+                        android:id="@+id/trashWeight"
                         android:layout_height="wrap_content"
                         android:text="0 RS"
                         android:textColor="#444"
@@ -158,7 +160,46 @@
                     android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
+
         </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/amountLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mp10"
+            android:layout_marginEnd="@dimen/mp10"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mp10"
+                android:padding="@dimen/mp10">
+
+                <EditText
+                    android:id="@+id/totalCharge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Total Amount charged from the user?"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/amountSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mp10"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="@dimen/mp10"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="@android:color/holo_green_dark"
+                android:foreground="?attr/selectableItemBackground"
+                android:text="SUBMIT"
+                android:textColor="#fff" />
+        </LinearLayout>
+
+
+
 
     </LinearLayout>
 

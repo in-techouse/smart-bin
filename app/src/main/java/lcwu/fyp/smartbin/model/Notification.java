@@ -84,11 +84,11 @@ public class Notification implements Serializable
     }
 
     public String getUserText() {
-        return driverText;
+        return userText;
     }
 
-    public void setUserText(String driverText) {
-        this.driverText = driverText;
+    public void setUserText(String userText) {
+        this.userText = userText;
     }
 
 
