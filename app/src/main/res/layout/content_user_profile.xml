@@ -80,8 +80,6 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:focusable="false"
-                android:clickable="false"
                 android:id="@+id/profilePhone"
                 android:inputType="phone"
                 android:hint="phone_number"
