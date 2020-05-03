@@ -24,12 +24,12 @@
             app:toolbarId="@+id/toolbar">
 
             <ImageView
-                android:adjustViewBounds="true"
-                android:layout_gravity="center"
                 android:id="@+id/profileImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
 
 
             <androidx.appcompat.widget.Toolbar
@@ -38,8 +38,6 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-
 
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -54,6 +52,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

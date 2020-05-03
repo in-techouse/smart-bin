@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,44 +8,47 @@
     tools:showIn="@layout/app_bar_dash_board">
 
     <com.google.android.gms.maps.MapView
-        android:layout_alignParentEnd="true"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/map"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        app:cardElevation="20dp"
-        app:cardCornerRadius="13dp"
         android:layout_alignParentTop="true"
-        android:background="@color/colorWhite">
-            <LinearLayout
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:background="@color/colorWhite"
+        app:cardCornerRadius="13dp"
+        app:cardElevation="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/Locationheading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:background="@color/colorWhite"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:maxLines="1"
-                    android:id="@+id/Locationheading"
-                    android:text="My Location"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textStyle="normal"
-                    android:maxLines="1"
-                    android:id="@+id/locationAddress"/>
-            </LinearLayout>
+                android:maxLines="1"
+                android:text="My Location"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/locationAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textStyle="normal" />
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -54,74 +56,75 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        app:cardElevation="20dp"
-        app:cardCornerRadius="13dp"
+        android:layout_marginBottom="50dp"
         android:background="@color/colorWhite"
-        android:layout_alignParentBottom="true">
+        app:cardCornerRadius="13dp"
+        app:cardElevation="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@color/colorWhite"
+            android:orientation="vertical"
             android:padding="8dp">
 
             <LinearLayout
+                android:id="@+id/wasteLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/wasteLayout"
                 android:background="@color/colorWhite"
+                android:orientation="vertical"
                 android:padding="8dp">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/wasteText"
-                    android:textSize="20dp"
-                    android:text="Enter weight of waste">
-                </TextView>
-                <EditText
-                    android:textSize="15dp"
-                    android:inputType="number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="waste must be greater then 10"
-                    android:id="@+id/wasteSize">
-                </EditText>
+                    android:text="How much waste do you have?"
+                    android:textSize="17dp" />
 
+                <EditText
+                    android:id="@+id/wasteSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter the weight here"
+                    android:inputType="number"
+                    android:textSize="15dp" />
+
+                <Button
+                    android:id="@+id/confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NEXT" />
             </LinearLayout>
 
 
             <LinearLayout
+                android:id="@+id/searching"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:id="@+id/searching"
                 android:orientation="vertical"
-                android:padding="7dp">
+                android:padding="7dp"
+                android:visibility="gone">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:layout_margin="5dp"
                     android:text="Connecting you to nearby truck"
                     android:textAlignment="center"
-                    android:layout_margin="5dp"/>
+                    android:textStyle="bold" />
+
                 <ProgressBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="7dp"
-                    android:layout_gravity="center"/>
-
+                    android:layout_gravity="center"
+                    android:layout_margin="7dp" />
             </LinearLayout>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CONFIRM"
-                android:id="@+id/confirm"/>
+
 
         </LinearLayout>
 

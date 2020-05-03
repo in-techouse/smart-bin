@@ -1,7 +1,5 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.MenuItem;
@@ -9,6 +7,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,7 +24,6 @@ public class ForgetPaswordActivity extends AppCompatActivity implements View.OnC
     ProgressBar ForgetProgress;
     Helpers helpers;
     EditText edtForEmail;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class ForgetPaswordActivity extends AppCompatActivity implements View.OnC
         int id = v.getId();
         switch (id) {
             case R.id.btnForSubmit: {
-                if(!helpers.isConnected(ForgetPaswordActivity.this)){
+                if (!helpers.isConnected(ForgetPaswordActivity.this)) {
                     helpers.showError(ForgetPaswordActivity.this, "ERROR!", "No internet connection found.\nPlease connect to a network and try again.");
                 }
                 strForEmail = edtForEmail.getText().toString();
@@ -73,26 +74,25 @@ public class ForgetPaswordActivity extends AppCompatActivity implements View.OnC
                     });
 
 
-                    }
+                }
                 break;
 
-                }
             }
-
-
         }
 
 
-    private boolean isVisibal(){
+    }
+
+
+    private boolean isVisibal() {
         boolean flag = true;
         if (strForEmail.length() < 6 || !Patterns.EMAIL_ADDRESS.matcher(strForEmail).matches()) {
             edtForEmail.setError("Enter a Valid email");
             flag = false;
-        }
-        else {
+        } else {
             edtForEmail.setError(null);
         }
-            return flag;
+        return flag;
     }
 
     @Override

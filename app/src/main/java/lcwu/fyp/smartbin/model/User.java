@@ -8,7 +8,8 @@ public class User implements Serializable {
     private int type;
     private double latitude, longitude;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String firstName, String lastName, String email, String id, String image, String licenseNumber, String phoneNumber, int type, double latitude, double longitude) {
         this.firstName = firstName;

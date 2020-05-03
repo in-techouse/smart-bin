@@ -1,36 +1,29 @@
 package lcwu.fyp.smartbin.model;
 
-import android.location.Location;
-
 import java.io.Serializable;
 
-public class Booking implements Serializable
-{
+public class Booking implements Serializable {
     private String id, userId, startTime;
-    private String pickup , status , driverId;
-    private double trashWeightig , lat , lng;
+    private String pickup, status, driverId;
+    private double trashWeight, lat, lng;
     private int payment;
     private int amountCharged;
-    private double trashWeight;
-
-
 
     public Booking() {
     }
 
-    public Booking(String id, String userId, String startTime, String pickup, double trashWeightig, int payment , String status , String driverId , double lat , double lng , int amountCharged ,double trashWeight) {
+    public Booking(String id, String userId, String startTime, String pickup, String status, String driverId, double trashWeight, double lat, double lng, int payment, int amountCharged) {
         this.id = id;
         this.userId = userId;
         this.startTime = startTime;
         this.pickup = pickup;
-        this.trashWeightig = trashWeightig;
-        this.payment = payment;
         this.status = status;
         this.driverId = driverId;
+        this.trashWeight = trashWeight;
         this.lat = lat;
         this.lng = lng;
+        this.payment = payment;
         this.amountCharged = amountCharged;
-        this.trashWeight = trashWeight;
     }
 
     public String getId() {
@@ -65,13 +58,13 @@ public class Booking implements Serializable
         this.pickup = pickup;
     }
 
-
+    public String getStatus() {
+        return status;
+    }
 
     public void setStatus(String status) {
         this.status = status;
     }
-
-    public String getStatus(){return status;}
 
     public String getDriverId() {
         return driverId;
@@ -79,6 +72,14 @@ public class Booking implements Serializable
 
     public void setDriverId(String driverId) {
         this.driverId = driverId;
+    }
+
+    public double getTrashWeight() {
+        return trashWeight;
+    }
+
+    public void setTrashWeight(double trashWeight) {
+        this.trashWeight = trashWeight;
     }
 
     public double getLat() {
@@ -96,6 +97,15 @@ public class Booking implements Serializable
     public void setLng(double lng) {
         this.lng = lng;
     }
+
+    public int getPayment() {
+        return payment;
+    }
+
+    public void setPayment(int payment) {
+        this.payment = payment;
+    }
+
     public int getAmountCharged() {
         return amountCharged;
     }
@@ -103,10 +113,4 @@ public class Booking implements Serializable
     public void setAmountCharged(int amountCharged) {
         this.amountCharged = amountCharged;
     }
-
-    public double getTrashWeight(){return  trashWeight;}
-
-    public void setTrashWeight(double traashWeight){ this.trashWeight = traashWeight;}
-
-
 }

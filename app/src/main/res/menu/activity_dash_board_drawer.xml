@@ -10,11 +10,6 @@
             android:title="@string/menu_home" />
 
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/profile"
-            android:title="@string/menu_profile" />
-
-        <item
             android:id="@+id/nav_bookings"
             android:icon="@drawable/online_booking"
             android:title="Bookings" />
@@ -25,8 +20,12 @@
             android:title="Notification" />
 
         <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/profile"
+            android:title="@string/menu_profile" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout"
-            android:title="Logout"/>
+            android:title="Logout" />
     </group>
 </menu>

@@ -1,9 +1,12 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.rbddevs.splashy.Splashy;
+
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.User;
@@ -17,19 +20,17 @@ public class SplashActivity extends AppCompatActivity {
         new Splashy.OnComplete() {
             @Override
             public void onComplete() {
-                Session session = new Session(SplashActivity.this );
+                Session session = new Session(SplashActivity.this);
                 User user = session.getUser();
-                if(user == null){
-                    Intent It = new Intent(SplashActivity.this,LoginActivity.class);
+                if (user == null) {
+                    Intent It = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(It);
                     finish();
-                }
-                else{
-                    if(user.getType() == 0){
+                } else {
+                    if (user.getType() == 0) {
                         Intent It = new Intent(SplashActivity.this, DashBoard.class);
                         startActivity(It);
-                    }
-                    else{
+                    } else {
                         Intent It = new Intent(SplashActivity.this, DriverDashboard.class);
                         startActivity(It);
                     }
@@ -47,11 +48,11 @@ public class SplashActivity extends AppCompatActivity {
                 .setLogo(R.drawable.logo)
                 .setTitle("Smart Bin")
                 .setTitleColor("#FFFFFF")
-                .setSubTitle("Smart bin is usfull for envorment")
+                .setSubTitle("Smart bin is use full for environment")
                 .setProgressColor(R.color.colorAccent)
-                .setBackgroundResource(R.drawable.ic_launcher_background)
+                .setBackgroundColor("#FFFFFF")
                 .setFullScreen(true)
-                .setTime(2500)
+                .setTime(2000)
                 .showProgress(true)
                 .setAnimation(Splashy.Animation.SLIDE_IN_LEFT_BOTTOM, 1000)
                 .show();

@@ -1,7 +1,5 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -10,6 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -19,13 +21,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.User;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
     Button btnLogin;
     EditText edtEmail, edtPasword;
     String strEmail, strPasword;
@@ -33,7 +35,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView go_to_forgetPasword;
     ProgressBar LoginProgress;
     Helpers helpers;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,80 +63,79 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin: {
 
                 //Check Internet
-                boolean isConn =helpers.isConnected(LoginActivity.this);
-                if (!isConn){
-                    helpers.showError(LoginActivity.this, "Internet Error","No internet found check your internet connection and try again?");
+                boolean isConn = helpers.isConnected(LoginActivity.this);
+                if (!isConn) {
+                    helpers.showError(LoginActivity.this, "Internet Error", "No internet found check your internet connection and try again?");
                     return;
                 }
 
-                 strEmail = edtEmail.getText().toString();
-                 strPasword = edtPasword.getText().toString();
+                strEmail = edtEmail.getText().toString();
+                strPasword = edtPasword.getText().toString();
 
-                  boolean flag= isValid();
-                  if (flag) {
+                boolean flag = isValid();
+                if (flag) {
 
-                      //Firebase
-                      LoginProgress.setVisibility(View.VISIBLE);
-                      btnLogin.setVisibility(View.GONE);
-                      FirebaseAuth auth = FirebaseAuth.getInstance();
-                      auth.signInWithEmailAndPassword(strEmail, strPasword)
-                              .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                  @Override
-                                  public void onSuccess(AuthResult authResult) {
-                                      DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                                      String id = strEmail.replace("@","-");
-                                      id = id.replace(".","_");
-                                      reference.child("Users").child(id).addValueEventListener(new ValueEventListener() {
-                                          @Override
-                                          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                              if (dataSnapshot.getValue()!=null){
-                                                  //Data is valid
-                                                  User u = dataSnapshot.getValue(User.class);
-                                                  if( u == null){
-                                                      LoginProgress.setVisibility(View.GONE);
-                                                      btnLogin.setVisibility(View.VISIBLE);
-                                                      helpers.showError(LoginActivity.this,"Login Failed","Somethng Went Wrong");
-                                                      return;
-                                                  }
-                                                  Session session = new Session(LoginActivity.this);
-                                                  session.setSession(u);
-                                                  if(u.getType() == 0){
-                                                      Intent it = new Intent(LoginActivity.this, DashBoard.class);
-                                                      it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                      startActivity(it);
-                                                  }
-                                                  else{
-                                                      Intent intent = new Intent(LoginActivity.this, DriverDashboard.class);
-                                                      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                      startActivity(intent);
-                                                  }
-                                                  finish();
-                                              }
-                                              else{
-                                                  LoginProgress.setVisibility(View.GONE);
-                                                  btnLogin.setVisibility(View.VISIBLE);
-                                                  helpers.showError(LoginActivity.this,"Login Failed","Somethng Went Wrong");
-                                              }
-                                          }
-                                          @Override
-                                          public void onCancelled(@NonNull DatabaseError databaseError) {
-                                              LoginProgress.setVisibility(View.GONE);
-                                              btnLogin.setVisibility(View.VISIBLE);
-                                              helpers.showError(LoginActivity.this,"Login Failed","Something went wrong");
+                    //Firebase
+                    LoginProgress.setVisibility(View.VISIBLE);
+                    btnLogin.setVisibility(View.GONE);
+                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    auth.signInWithEmailAndPassword(strEmail, strPasword)
+                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                                    String id = strEmail.replace("@", "-");
+                                    id = id.replace(".", "_");
+                                    reference.child("Users").child(id).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.getValue() != null) {
+                                                //Data is valid
+                                                User u = dataSnapshot.getValue(User.class);
+                                                if (u == null) {
+                                                    LoginProgress.setVisibility(View.GONE);
+                                                    btnLogin.setVisibility(View.VISIBLE);
+                                                    helpers.showError(LoginActivity.this, "Login Failed", "Somethng Went Wrong");
+                                                    return;
+                                                }
+                                                Session session = new Session(LoginActivity.this);
+                                                session.setSession(u);
+                                                if (u.getType() == 0) {
+                                                    Intent it = new Intent(LoginActivity.this, DashBoard.class);
+                                                    it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(it);
+                                                } else {
+                                                    Intent intent = new Intent(LoginActivity.this, DriverDashboard.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(intent);
+                                                }
+                                                finish();
+                                            } else {
+                                                LoginProgress.setVisibility(View.GONE);
+                                                btnLogin.setVisibility(View.VISIBLE);
+                                                helpers.showError(LoginActivity.this, "Login Failed", "Somethng Went Wrong");
+                                            }
+                                        }
 
-                                          }
-                                      });
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            LoginProgress.setVisibility(View.GONE);
+                                            btnLogin.setVisibility(View.VISIBLE);
+                                            helpers.showError(LoginActivity.this, "Login Failed", "Something went wrong");
 
-                                  }
-                              }).addOnFailureListener(new OnFailureListener() {
-                                  @Override
-                                  public void onFailure(@NonNull Exception e) {
-                                      LoginProgress.setVisibility(View.GONE);
-                                      btnLogin.setVisibility(View.VISIBLE);
-                                      helpers.showError(LoginActivity.this, "Login Failed", e.getMessage());
-                                  }
-                              });
-                  }
+                                        }
+                                    });
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            LoginProgress.setVisibility(View.GONE);
+                            btnLogin.setVisibility(View.VISIBLE);
+                            helpers.showError(LoginActivity.this, "Login Failed", e.getMessage());
+                        }
+                    });
+                }
                 break;
 
 
@@ -153,7 +153,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
-    private boolean isValid(){
+
+    private boolean isValid() {
         boolean flag = true;
         if (strEmail.length() < 6 || !Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
             edtEmail.setError("Enter valid Email");
@@ -161,7 +162,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else {
             edtEmail.setError(null);
         }
-
 
         if (strPasword.length() < 6) {
             edtPasword.setError("Enter valid Password");

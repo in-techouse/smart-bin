@@ -21,5 +21,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_dash_board" />
-    <include layout="@layout/customer_bottom_sheet"/>
+
+    <include layout="@layout/customer_bottom_sheet" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

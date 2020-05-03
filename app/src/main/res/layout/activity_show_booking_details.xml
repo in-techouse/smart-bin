@@ -1,166 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ShowBookingDetails">
 
-
     <com.google.android.gms.maps.MapView
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true" />
 
     <androidx.cardview.widget.CardView
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorTextWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        app:cardElevation="20dp"
-        app:cardCornerRadius="13dp">
+        android:layout_marginBottom="50dp"
+        android:background="@color/colorTextWhite"
+        app:cardCornerRadius="13dp"
+        app:cardElevation="20dp">
 
         <LinearLayout
-            android:visibility="visible"
+            android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/progress"
+            android:layout_margin="11dp"
             android:orientation="vertical"
             android:padding="11dp"
-            android:layout_margin="11dp">
+            android:visibility="visible">
+
             <ProgressBar
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
         </LinearLayout>
 
 
         <LinearLayout
-            android:orientation="vertical"
-            android:background="@color/colorTextWhite"
-            android:layout_width="match_parent"
             android:id="@+id/main"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorTextWhite"
+            android:orientation="vertical"
             android:padding="8dp">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <de.hdodenhof.circleimageview.CircleImageView
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="#FF000000"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
+                    android:id="@+id/userImage"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/profile"
-                    android:id="@+id/userImage" />
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="2dp" />
+
                 <TextView
                     android:id="@+id/userNameLabel"
-                    android:layout_toEndOf="@id/userImage"
-                    android:textStyle="bold"
-                    android:text="User Name"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="3dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="3dp" />
-                <TextView
-                    android:layout_below="@id/userNameLabel"
-                    android:layout_toEndOf="@id/userImage"
                     android:layout_marginStart="3dp"
-                    android:layout_marginEnd="3dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
+                    android:layout_marginEnd="3dp"
                     android:layout_marginBottom="3dp"
-                    android:id="@+id/userName"/>
+                    android:layout_toEndOf="@id/userImage"
+                    android:text="User Name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/userNameLabel"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_toEndOf="@id/userImage" />
             </RelativeLayout>
 
             <TextView
-                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginTop="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
+                android:layout_marginBottom="@dimen/mp3"
                 android:text="User Location"
-                android:layout_marginStart="@dimen/mp3"
-                android:layout_marginEnd="@dimen/mp3"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mp3"
                 android:layout_marginTop="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
                 android:layout_marginBottom="@dimen/mp3" />
+
             <TextView
-                android:layout_marginStart="@dimen/mp3"
-                android:layout_marginEnd="@dimen/mp3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mp3"
                 android:layout_marginTop="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3"
                 android:layout_marginBottom="@dimen/mp3"
-                android:id="@+id/address"/>
-            <TextView
-                android:textStyle="bold"
                 android:text="Your Location"
-                android:layout_marginStart="@dimen/mp3"
-                android:layout_marginEnd="@dimen/mp3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mp3"
-                android:layout_marginBottom="@dimen/mp3" />
+                android:textStyle="bold" />
+
             <TextView
-                android:layout_marginStart="@dimen/mp3"
-                android:layout_marginEnd="@dimen/mp3"
+                android:id="@+id/your_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mp3"
-                android:layout_marginBottom="@dimen/mp3"
-                android:id="@+id/your_address"/>
-            <RelativeLayout
                 android:layout_marginStart="@dimen/mp3"
+                android:layout_marginTop="@dimen/mp3"
                 android:layout_marginEnd="@dimen/mp3"
+                android:layout_marginBottom="@dimen/mp3" />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mp3"
+                android:layout_marginEnd="@dimen/mp3">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:text="Estimated Travel"
-                    android:textStyle="bold"
-                    android:layout_alignParentStart="true"/>
+                    android:textStyle="bold" />
+
                 <TextView
+                    android:id="@+id/Travel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/Travel"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
+
             <LinearLayout
-                android:layout_marginTop="10dp"
                 android:id="@+id/buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:weightSum="2">
+
                 <Button
-                    android:layout_margin="3dp"
-                    android:background="@color/colorReject"
-                    android:textColor="@color/colorTextWhite"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:id="@+id/reject"
-                    android:text="Reject"/>
-                <Button
-                    android:layout_margin="3dp"
-                    android:background="@color/colorAccept"
-                    android:textColor="@color/colorTextWhite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
+                    android:background="@color/colorReject"
+                    android:text="Reject"
+                    android:textColor="@color/colorTextWhite" />
+
+                <Button
                     android:id="@+id/accept"
-                    android:text="Accept"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorAccept"
+                    android:text="Accept"
+                    android:textColor="@color/colorTextWhite" />
             </LinearLayout>
 
         </LinearLayout>

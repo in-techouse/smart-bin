@@ -4,8 +4,21 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.asksira.bsimagepicker.BSImagePicker;
 import com.asksira.bsimagepicker.Utils;
@@ -13,25 +26,11 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-
-import android.util.Log;
-import android.util.Patterns;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import java.util.Calendar;
 
@@ -42,14 +41,14 @@ import lcwu.fyp.smartbin.model.User;
 
 public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener, BSImagePicker.OnSingleImageSelectedListener, BSImagePicker.ImageLoaderDelegate {
 
-    private EditText profileFirstName , profileLastName , profileEmail , profilePhone;
+    private EditText profileFirstName, profileLastName, profileEmail, profilePhone;
     Session session;
     User user;
     Button update;
     ProgressBar updateProgress;
     Helpers helpers;
     DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("Users");
-    private String strFirstName , strlastName , strPhone;
+    private String strFirstName, strlastName, strPhone;
     ImageView image;
     boolean isImage = false;
     Uri imageUri;
@@ -66,8 +65,13 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
 
         profileFirstName = findViewById(R.id.profileFirstName);
@@ -83,9 +87,9 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
         image = findViewById(R.id.profileImage);
 
-        if(user.getImage() != null){
+        if (user.getImage() != null) {
             Glide.with(UserProfileActivity.this).load(user.getImage()).into(image);
-        }else{
+        } else {
             image.setImageDrawable(getResources().getDrawable(R.drawable.profile));
         }
 
@@ -107,11 +111,11 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        switch (id){
-            case R.id.btnUpdation : {
+        switch (id) {
+            case R.id.btnUpdation: {
                 boolean isConn = helpers.isConnected(UserProfileActivity.this);
-                if (!isConn){
-                    helpers.showError(UserProfileActivity.this,"Internet Error", "No internet found check your internet connection and try again?");
+                if (!isConn) {
+                    helpers.showError(UserProfileActivity.this, "Internet Error", "No internet found check your internet connection and try again?");
                     return;
                 }
                 updateProgress.setVisibility(View.VISIBLE);
@@ -122,12 +126,11 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 strPhone = profilePhone.getText().toString();
 
                 boolean flag = isValid();
-                if(flag){
+                if (flag) {
 
-                    if(isImage){
+                    if (isImage) {
                         uploadImage();
-                    }
-                    else{
+                    } else {
                         user.setImage("");
                         saveUser();
                     }
@@ -135,12 +138,11 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 }
                 break;
             }
-            case R.id.fab : {
+            case R.id.fab: {
                 boolean flag = hasPermissions(UserProfileActivity.this, PERMISSIONS);
-                if(!flag){
+                if (!flag) {
                     ActivityCompat.requestPermissions(UserProfileActivity.this, PERMISSIONS, 1);
-                }
-                else{
+                } else {
                     openGallery();
                 }
                 break;
@@ -176,9 +178,9 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         return flag;
     }
 
-    void saveUser(){
+    void saveUser() {
 
-        String userId= user.getId();
+        final String userId = user.getId();
         user.setFirstName(strFirstName);
         user.setLastName(strlastName);
         user.setPhoneNumber(strPhone);
@@ -188,23 +190,31 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             public void onSuccess(Void aVoid) {
                 updateProgress.setVisibility(View.GONE);
                 session.setSession(user);
-                Log.e("user data" ,"user data is "+user.getFirstName()+" "+user.getLastName());
-                Intent in = new Intent(UserProfileActivity.this , DashBoard.class);
+                Log.e("user data", "user data is " + user.getFirstName() + " " + user.getLastName());
+                Intent in;
+
+                if (user.getType() == 0) {
+                    in = new Intent(UserProfileActivity.this, DashBoard.class);
+                } else {
+                    in = new Intent(UserProfileActivity.this, DriverDashboard.class);
+                }
+                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(in);
+                finish();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                helpers.showError(UserProfileActivity.this , "Profile Error" , "Data Could not Be Updated!");
+                helpers.showError(UserProfileActivity.this, "Profile Error", "Data Could not Be Updated!");
             }
         });
     }
 
-    private void uploadImage(){
+    private void uploadImage() {
         final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(user.getId());
         Calendar calendar = Calendar.getInstance();
-        storageReference.child(calendar.getTimeInMillis()+"").putFile(imageUri)
+        storageReference.child(calendar.getTimeInMillis() + "").putFile(imageUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -238,16 +248,16 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 });
     }
 
-    private boolean hasPermissions(Context c, String... permission){
-        for(String p : permission){
-            if(ActivityCompat.checkSelfPermission(c, p) != PackageManager.PERMISSION_GRANTED){
+    private boolean hasPermissions(Context c, String... permission) {
+        for (String p : permission) {
+            if (ActivityCompat.checkSelfPermission(c, p) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
         return true;
     }
 
-    public void openGallery(){
+    public void openGallery() {
         BSImagePicker singleSelectionPicker = new BSImagePicker.Builder("lcwu.fyp.gohytch.fileprovider")
                 .setMaximumDisplayingImages(24) //Default: Integer.MAX_VALUE. Don't worry about performance :)
                 .setSpanCount(3) //Default: 3. This is the number of columns
@@ -271,6 +281,16 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         isImage = true;
         imageUri = uri;
         Glide.with(UserProfileActivity.this).load(imageUri).into(image);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                break;
+            }
+        }
+        return true;
     }
 }

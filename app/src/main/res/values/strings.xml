@@ -10,7 +10,7 @@
     <string name="registration_screen">Registration Screen</string>
     <string name="profile_screen">User Profile</string>
     <string name="login">Login</string>
-    <string name="title_activity_dash_board">DashBoard</string>
+    <string name="title_activity_dash_board">Customer Dashboard</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -27,7 +27,7 @@
     <string name="menu_send">Send</string>
     <string name="submit">Submit</string>
     <string name="update">Update</string>
-    <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_user_profile">Edit Profile</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -117,7 +117,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="title_activity_driver_dashboard">DriverDashboard</string>
+    <string name="title_activity_driver_dashboard">Driver Dashboard</string>
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="don_t_have_an_account_click_here_to_register">Don\'t have an account? <b>Click here to Register?</b></string>
     <string name="forgot_password_click_here_to_recover">Forgot Password? <b>Click here to Recover?</b></string>

@@ -1,7 +1,5 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -11,12 +9,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.director.Helpers;
 import lcwu.fyp.smartbin.director.Session;
@@ -48,7 +51,6 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
         go_to_login = findViewById(R.id.go_to_login);
 
-
         btnRegister.setOnClickListener(this);
         go_to_login.setOnClickListener(this);
     }
@@ -60,11 +62,10 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             case R.id.btnRegistration: {
                 //Check Internet
                 boolean isConn = helpers.isConnected(RegistrationActivity.this);
-                if (!isConn){
-                    helpers.showError(RegistrationActivity.this,"Internet Error", "No internet found check your internet connection and try again?");
+                if (!isConn) {
+                    helpers.showError(RegistrationActivity.this, "Internet Error", "No internet found check your internet connection and try again?");
                     return;
                 }
-
 
                 str1stName = edt1stName.getText().toString();
                 strlastName = edtlastName.getText().toString();
@@ -92,50 +93,50 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                     user.setType(0);
                                     user.setLicenseNumber("");
 
-                                    String id = strRegEmail.replace("@","-");
-                                    id = id.replace(".","_");
+                                    String id = strRegEmail.replace("@", "-");
+                                    id = id.replace(".", "_");
                                     user.setId(id);
-                                   reference.child("Users").child(id).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                       @Override
-                                       public void onSuccess(Void aVoid) {
-                                           Session session = new Session(RegistrationActivity.this);
-                                           session.setSession(user);
-                                           Intent intent = new Intent(RegistrationActivity.this,DashBoard.class);
-                                           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                           startActivity(intent);
-                                           finish();
+                                    reference.child("Users").child(id).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Session session = new Session(RegistrationActivity.this);
+                                            session.setSession(user);
+                                            Intent intent = new Intent(RegistrationActivity.this, DashBoard.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                            finish();
 
-                                       }
-                                   }).addOnFailureListener(new OnFailureListener() {
-                                       @Override
-                                       public void onFailure(@NonNull Exception e) {
-                                           RegistrationProgress.setVisibility(View.GONE);
-                                           btnRegister.setVisibility(View.VISIBLE);
-                                           helpers.showError(RegistrationActivity.this,"Registration Failed","Something Went wrong");
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            RegistrationProgress.setVisibility(View.GONE);
+                                            btnRegister.setVisibility(View.VISIBLE);
+                                            helpers.showError(RegistrationActivity.this, "Registration Failed", "Something Went wrong");
 
-                                       }
-                                   });
+                                        }
+                                    });
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    RegistrationProgress.setVisibility(View.GONE);
-                                    btnRegister.setVisibility(View.VISIBLE);
-                                    helpers.showError(RegistrationActivity.this, "Registration Failed", e.getMessage());
-                                }
-                            });
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            RegistrationProgress.setVisibility(View.GONE);
+                            btnRegister.setVisibility(View.VISIBLE);
+                            helpers.showError(RegistrationActivity.this, "Registration Failed", e.getMessage());
+                        }
+                    });
 
                 }
                 break;
             }
             case R.id.go_to_login: {
-                Intent it = new Intent(RegistrationActivity.this, LoginActivity.class);
-                startActivity(it);
+                finish();
                 break;
             }
         }
     }
+
     private boolean isValid() {
         boolean flag = true;
         if (str1stName.length() < 3) {
@@ -181,11 +182,10 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             edtConPasword.setError(null);
         }
 
-        if(strRegPasword.length() > 5 && strConPasword.length() > 5 && !strRegPasword.equals(strConPasword)){
+        if (strRegPasword.length() > 5 && strConPasword.length() > 5 && !strRegPasword.equals(strConPasword)) {
             edtConPasword.setError("Password does not match");
             flag = false;
-        }
-        else{
+        } else {
             edtConPasword.setError(null);
         }
         return flag;

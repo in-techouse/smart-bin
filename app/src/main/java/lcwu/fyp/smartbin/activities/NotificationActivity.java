@@ -1,9 +1,6 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,15 +55,22 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
     private ProgressBar sheetProgress;
     private LinearLayout mainSheet;
     private CircleImageView image;
-    private TextView about, name, date,  status,trashWeight, totalCharge, address;
+    private TextView about, name, date, status, trashWeight, totalCharge, address;
     private Helpers helpers;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_notification);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Notifications");
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setHomeButtonEnabled(true);
 
         helpers = new Helpers();
 
@@ -100,8 +111,6 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
         }
 
         loadNotification();
-
-
     }
 
     private void loadNotification() {
@@ -144,7 +153,7 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
                 notifications.setVisibility(View.GONE);
             }
         };
-        reference.orderByChild(orderBy).equalTo(user.getPhoneNumber()).addValueEventListener(notificationListener);
+        reference.orderByChild(orderBy).equalTo(user.getId()).addValueEventListener(notificationListener);
 
     }
 
@@ -175,7 +184,7 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
                     date.setText(booking.getStartTime());
                     address.setText(booking.getPickup());
                     totalCharge.setText(booking.getAmountCharged() + " RS.");
-                    trashWeight.setText(booking.getTrashWeight()+" kg");
+                    trashWeight.setText(booking.getTrashWeight() + " kg");
 
                     status.setText(booking.getStatus());
                     userListener = new ValueEventListener() {
@@ -254,7 +263,6 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
                 break;
             }
         }
-
     }
 
     @Override
@@ -281,6 +289,4 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
         } else
             finish();
     }
-
-
 }

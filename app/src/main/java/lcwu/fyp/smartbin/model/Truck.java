@@ -5,7 +5,8 @@ import java.io.Serializable;
 public class Truck implements Serializable {
     private String id, driverId, truckModel, registrationNumber, truckCapacity;
 
-    public Truck() {}
+    public Truck() {
+    }
 
     public Truck(String id, String registrationNumber, String truckModel, String truckCapacity, String driverId) {
         this.id = id;

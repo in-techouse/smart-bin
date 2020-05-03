@@ -1,101 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activities.LoginActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            android:textStyle="bold"
-            android:textAllCaps="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:textColor="@color/colorWhite"
-            android:textAlignment="center"
-            android:textSize="@dimen/textsize"
             android:padding="@dimen/textpadding"
             android:text="@string/login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/textsize"
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
 
             <EditText
                 android:id="@+id/edtEmail"
-                android:inputType="textEmailAddress"
-                android:hint="@string/e_mail"
-                android:padding="@dimen/textpadding"
-                android:layout_margin="@dimen/textsize"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/textsize"
+                android:hint="@string/e_mail"
+                android:inputType="textEmailAddress"
+                android:padding="@dimen/textpadding" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            app:passwordToggleEnabled="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true">
 
             <EditText
                 android:id="@+id/edtPasword"
-                android:inputType="textPassword"
-                android:hint="@string/pasword"
-                android:padding="@dimen/textpadding"
-                android:layout_margin="@dimen/textsize"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/textsize"
+                android:hint="@string/pasword"
+                android:inputType="textPassword"
+                android:padding="@dimen/textpadding" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:layout_margin="@dimen/margen25"
             android:id="@+id/btnLogin"
-            android:textSize="@dimen/loginbtnsize"
-            android:background="@color/colorPrimaryDark"
-            android:textColor="@color/colorWhite"
-            android:text="@string/submit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margen25"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/submit"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/loginbtnsize" />
 
         <ProgressBar
-            android:visibility="gone"
             android:id="@+id/LoginProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/go_to_registration"
-            android:padding="12dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:textAlignment="center"
-            android:text="@string/don_t_have_an_account_click_here_to_register"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="20dp"
+            android:padding="12dp"
+            android:text="@string/don_t_have_an_account_click_here_to_register"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/go_to_forgetPasword"
-            android:padding="12dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:textAlignment="center"
-            android:text="@string/forgot_password_click_here_to_recover"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="20dp"
+            android:padding="12dp"
+            android:text="@string/forgot_password_click_here_to_recover"
+            android:textAlignment="center" />
     </LinearLayout>
 
 </ScrollView>

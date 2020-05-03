@@ -1,9 +1,5 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,6 +18,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -61,7 +61,7 @@ import lcwu.fyp.smartbin.model.User;
 
 public class ShowBookingDetails extends AppCompatActivity implements View.OnClickListener {
     private Booking booking;
-    private TextView UserName,user_address,travel, YourAddress;
+    private TextView UserName, user_address, travel, YourAddress;
     private MapView map;
     private GoogleMap googleMap;
     private Marker userMarker, providerMarker;
@@ -81,24 +81,21 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_booking_details);
         Intent it = getIntent();
-        if(it==null)
-        {
+        if (it == null) {
             Log.e("BookingDetail", "Intent is NULL");
             finish();
             return;
 
         }
         Bundle b = it.getExtras();
-        if (b==null)
-        {
+        if (b == null) {
             Log.e("BookingDetail", "Extra is NULL");
             finish();
             return;
         }
 
         booking = (Booking) b.getSerializable("Booking");
-        if (booking==null)
-        {
+        if (booking == null) {
             Log.e("BookingDetail", "Booking is NULL");
             finish();
             return;
@@ -106,7 +103,6 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
 
         progress = findViewById(R.id.progress);
         main = findViewById(R.id.main);
-
 
 
         UserName = findViewById(R.id.userName);
@@ -142,40 +138,41 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                     rlp.setMargins(0, 350, 100, 0);
 
                     googleMap = gM;
-                    LatLng defaultPosition = new LatLng(31.5204,74.3487) ;
-                    CameraPosition cameraPosition =new CameraPosition.Builder().target(defaultPosition).zoom(12).build();
+                    LatLng defaultPosition = new LatLng(31.5204, 74.3487);
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(defaultPosition).zoom(12).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     enableLocation();
                 }
             });
-        }
-        catch (Exception e){
-            helpers.showError(ShowBookingDetails.this, "Error" , Constants.ERROR_SOMETHING_WENT_WRONG );
+        } catch (Exception e) {
+            helpers.showError(ShowBookingDetails.this, "Error", Constants.ERROR_SOMETHING_WENT_WRONG);
         }
     }
 
-    private void loadUserData(){
+    private void loadUserData() {
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                databaseReference.removeEventListener(userListener);
-                if (dataSnapshot.getValue()!=null){
+                if (userListener != null)
+                    databaseReference.child("Users").child(booking.getUserId()).addValueEventListener(userListener);
+                if (userListener != null)
+                    databaseReference.removeEventListener(userListener);
+
+                if (dataSnapshot.getValue() != null) {
                     customer = dataSnapshot.getValue(User.class);
-                    if (customer!=null){
+                    if (customer != null) {
                         main.setVisibility(View.VISIBLE);
                         progress.setVisibility(View.GONE);
                         UserName.setText(customer.getFirstName());
-                        if(customer.getImage() != null && user.getImage().length() > 0){
+                        if (customer.getImage() != null && user.getImage().length() > 0) {
                             Glide.with(getApplicationContext()).load(customer.getImage()).into(userImage);
                         }
-                    }
-                    else{
+                    } else {
                         UserName.setText("");
                         main.setVisibility(View.VISIBLE);
                         progress.setVisibility(View.GONE);
                     }
-                }
-                else{
+                } else {
                     UserName.setText("");
                     main.setVisibility(View.VISIBLE);
                     progress.setVisibility(View.GONE);
@@ -184,7 +181,10 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                databaseReference.removeEventListener(userListener);
+                if (userListener != null)
+                    databaseReference.child("Users").child(booking.getUserId()).addValueEventListener(userListener);
+                if (userListener != null)
+                    databaseReference.removeEventListener(userListener);
                 UserName.setText("");
                 main.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
@@ -195,7 +195,7 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
     }
 
 
-//    private void loaduserdata(){
+    //    private void loaduserdata(){
 //
 //        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(booking.getUserId());
 //        reference.addValueEventListener(new ValueEventListener() {
@@ -223,24 +223,25 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
 //            }
 //        });
 //    }
-    private boolean askForPermission(){
+    private boolean askForPermission() {
         if (ActivityCompat.checkSelfPermission(ShowBookingDetails.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(ShowBookingDetails.this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                && ActivityCompat.checkSelfPermission(ShowBookingDetails.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ShowBookingDetails.this, new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 10);
             return false;
         }
         return true;
     }
-    public void enableLocation(){
-        if(askForPermission()){
+
+    public void enableLocation() {
+        if (askForPermission()) {
             googleMap.setMyLocationEnabled(true);
             googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
                     FusedLocationProviderClient current = LocationServices.getFusedLocationProviderClient(ShowBookingDetails.this);
-                    current.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>(){
-                        public void onSuccess(Location location){
+                    current.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                        public void onSuccess(Location location) {
                             getDeviceLocation();
                         }
                     });
@@ -251,25 +252,24 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void getDeviceLocation(){
+    private void getDeviceLocation() {
         Log.e("Location", "Call received to get device location");
         try {
-            LocationManager lm =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             boolean gps_enabled = false;
             boolean network_enabled = false;
             try {
-                gps_enabled =lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            }
-            catch (Exception ex){
-                helpers.showError(ShowBookingDetails.this, "Error" , "Something Went Wrong");
+                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch (Exception ex) {
+                helpers.showError(ShowBookingDetails.this, "Error", "Something Went Wrong");
             }
             try {
-                network_enabled=lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            }catch (Exception ex){
-                helpers.showError(ShowBookingDetails.this, "Error" , "Something Went Wrong");
+                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch (Exception ex) {
+                helpers.showError(ShowBookingDetails.this, "Error", "Something Went Wrong");
 
             }
-            if (!gps_enabled&& !network_enabled){
+            if (!gps_enabled && !network_enabled) {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(ShowBookingDetails.this);
                 dialog.setMessage("Oppsss.Your Location Service is off.\n Please turn on your Location and Try again Later");
                 dialog.setPositiveButton("Let me On", new DialogInterface.OnClickListener() {
@@ -321,11 +321,11 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                                 user_address.setText(booking.getPickup());
 //                                fare.setText(booking.getFare()+"+ Rs");
 
-                                double distance = helpers.distance(me.latitude,me.longitude, customerlocation.latitude,customerlocation.longitude);
-                                travel.setText(distance+" KM" );
+                                double distance = helpers.distance(me.latitude, me.longitude, customerlocation.latitude, customerlocation.longitude);
+                                travel.setText(distance + " KM");
 
                             } catch (Exception exception) {
-                                helpers.showError(ShowBookingDetails.this  , "Error" , "Something Went Wrong");
+                                helpers.showError(ShowBookingDetails.this, "Error", "Something Went Wrong");
                             }
                         }
                     }
@@ -333,20 +333,19 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    helpers.showError(ShowBookingDetails.this  , "Error" , "Something Went Wrong");
+                    helpers.showError(ShowBookingDetails.this, "Error", "Something Went Wrong");
                 }
             });
-        }
-        catch (Exception e){
-            helpers.showError(ShowBookingDetails.this  , "Error" , "Something Went Wrong");
+        } catch (Exception e) {
+            helpers.showError(ShowBookingDetails.this, "Error", "Something Went Wrong");
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode==10){
-            if (grantResults.length> 0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+        if (requestCode == 10) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableLocation();
             }
         }
@@ -355,8 +354,8 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        switch (id){
-            case R.id.accept : {
+        switch (id) {
+            case R.id.accept: {
                 main.setVisibility(View.GONE);
                 progress.setVisibility(View.VISIBLE);
                 bookingListener = new ValueEventListener() {
@@ -364,22 +363,20 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         databaseReference.removeEventListener(bookingListener);
                         Booking tempBooking = dataSnapshot.getValue(Booking.class);
-                        if(!isListening){
+                        if (!isListening) {
                             return;
                         }
                         isListening = false;
-                        if(tempBooking != null){
-                            if((tempBooking.getDriverId() == null || tempBooking.getDriverId().length() < 1) && tempBooking.getStatus().equals("New")){
+                        if (tempBooking != null) {
+                            if ((tempBooking.getDriverId() == null || tempBooking.getDriverId().length() < 1) && tempBooking.getStatus().equals("New")) {
                                 Log.e("BookingDetail", "Temp Booking Found with empty driver and New Status");
                                 acceptBooking(tempBooking);
-                            }
-                            else{
+                            } else {
                                 main.setVisibility(View.VISIBLE);
                                 progress.setVisibility(View.GONE);
 //                                helpers.showErrorWithActivityClose(BookingDetails.this, "SORRY", "The booking has been accepted by another driver.");
                             }
-                        }
-                        else{
+                        } else {
                             main.setVisibility(View.VISIBLE);
                             progress.setVisibility(View.GONE);
                             helpers.showError(ShowBookingDetails.this, "ERROR", "Something went wrong. Please try again later");
@@ -398,27 +395,28 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                 databaseReference.child("Bookings").child(booking.getId()).addValueEventListener(bookingListener);
                 break;
             }
-            case R.id.reject : {
+            case R.id.reject: {
                 finish();
                 break;
             }
         }
     }
-    private void acceptBooking(final Booking tempBooking){
+
+    private void acceptBooking(final Booking tempBooking) {
         tempBooking.setStatus("In Progress");
-        tempBooking.setDriverId(user.getPhoneNumber());
+        tempBooking.setDriverId(user.getId());
         databaseReference.child("Bookings").child(tempBooking.getId()).setValue(tempBooking)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.e("booking" , "inOnSuccess");
+                        Log.e("booking", "inOnSuccess");
                         sendNotification(tempBooking);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("booking" , "Failed");
+                        Log.e("booking", "Failed");
                         main.setVisibility(View.VISIBLE);
                         progress.setVisibility(View.GONE);
                         helpers.showError(ShowBookingDetails.this, "ERROR", "Something went wrong. Please try again later");
@@ -426,20 +424,20 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                 });
     }
 
-    private void sendNotification(Booking b){
+    private void sendNotification(Booking b) {
         Notification notification = new Notification();
         DatabaseReference notificationReference = FirebaseDatabase.getInstance().getReference().child("Notifications");
-        String id= notificationReference.push().getKey();
+        String id = notificationReference.push().getKey();
         notification.setId(id);
         notification.setBookingId(b.getId());
-        notification.setUserId(customer.getPhoneNumber());
-        notification.setDriverId(user.getPhoneNumber());
+        notification.setUserId(customer.getId());
+        notification.setDriverId(user.getId());
         notification.setRead(false);
         Date d = new Date();
         String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
         notification.setDate(date);
-        notification.setDriverText("You accepted the booking of " + customer.getFirstName()+" "+customer.getLastName());
-        notification.setUserText("Your booking has been accepted by " + user.getFirstName()+" "+user.getLastName());
+        notification.setDriverText("You accepted the booking of " + customer.getFirstName() + " " + customer.getLastName());
+        notification.setUserText("Your booking has been accepted by " + user.getFirstName() + " " + user.getLastName());
         notificationReference.child(notification.getId()).setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -458,19 +456,16 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    protected void onDestroy () {
+    protected void onDestroy() {
         super.onDestroy();
         map.onDestroy();
-        if(databaseReference != null){
-            if(bookingListener != null){
+        if (databaseReference != null) {
+            if (bookingListener != null) {
                 databaseReference.removeEventListener(bookingListener);
             }
-            if(userListener != null){
+            if (userListener != null) {
                 databaseReference.removeEventListener(userListener);
             }
         }
     }
-
-
-
 }

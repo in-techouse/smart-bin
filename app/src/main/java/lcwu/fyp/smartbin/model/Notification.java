@@ -2,16 +2,14 @@ package lcwu.fyp.smartbin.model;
 
 import java.io.Serializable;
 
-public class Notification implements Serializable
-{
-    private String id,bookingId,userId,notifications , drivierId ,date ,driverText , userText;
+public class Notification implements Serializable {
+    private String id, bookingId, userId, notifications, drivierId, date, driverText, userText;
     private boolean read;
-
 
     public Notification() {
     }
 
-    public Notification(String id, String bookingId, String userId, String notifications , String driverId , boolean read , String date , String driverText , String userText) {
+    public Notification(String id, String bookingId, String userId, String notifications, String driverId, boolean read, String date, String driverText, String userText) {
         this.id = id;
         this.bookingId = bookingId;
         this.userId = userId;
@@ -55,9 +53,13 @@ public class Notification implements Serializable
         this.notifications = notifications;
     }
 
-    public String getDriverId(){return drivierId;}
+    public String getDriverId() {
+        return drivierId;
+    }
 
-    public void setDriverId(String driverId){this.drivierId = driverId;}
+    public void setDriverId(String driverId) {
+        this.drivierId = driverId;
+    }
 
     public boolean isRead() {
         return read;
@@ -90,9 +92,4 @@ public class Notification implements Serializable
     public void setUserText(String userText) {
         this.userText = userText;
     }
-
-
-
-
-
 }

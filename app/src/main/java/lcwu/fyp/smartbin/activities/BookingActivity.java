@@ -1,9 +1,6 @@
 package lcwu.fyp.smartbin.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +55,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private ProgressBar sheetProgress;
     private LinearLayout mainSheet;
     private CircleImageView image;
-    private TextView about, name, date, status, totalCharge, address , trashWeight;
+    private TextView about, name, date, status, totalCharge, address, trashWeight;
     private RelativeLayout userLayout;
     private Helpers helpers;
 
@@ -60,6 +64,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Bookings");
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setHomeButtonEnabled(true);
 
         loading = findViewById(R.id.loading);
         noBooking = findViewById(R.id.noBooking);
@@ -72,7 +83,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         Data = new ArrayList<>();
         helpers = new Helpers();
 
-        LinearLayout layoutBottomSheet= findViewById(R.id.bottom_sheet);
+        LinearLayout layoutBottomSheet = findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
         sheetBehavior.setHideable(true);
         sheetBehavior.setPeekHeight(0);
@@ -103,10 +114,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
 
     }
-    private void loadBookings(){
 
-        if(!helpers.isConnected(BookingActivity.this)){
-            helpers.showError(BookingActivity.this,"Internet Error","No internet connection check your connection try again");
+    private void loadBookings() {
+
+        if (!helpers.isConnected(BookingActivity.this)) {
+            helpers.showError(BookingActivity.this, "Internet Error", "No internet connection check your connection try again");
             return;
 
         }
@@ -147,7 +159,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 bookings.setVisibility(View.GONE);
             }
         };
-        bookingReference.orderByChild(orderBy).equalTo(user.getPhoneNumber()).addValueEventListener(bookingListener);
+        bookingReference.orderByChild(orderBy).equalTo(user.getId()).addValueEventListener(bookingListener);
     }
 
     public void showBottomSheet(final Booking booking) {
@@ -164,7 +176,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         date.setText(booking.getStartTime());
         address.setText(booking.getPickup());
         totalCharge.setText(booking.getAmountCharged() + " RS.");
-        trashWeight.setText(booking.getTrashWeight()+" kg");
+        trashWeight.setText(booking.getTrashWeight() + " kg");
         status.setText(booking.getStatus());
 
         if (booking.getDriverId().equals("")) {
@@ -265,7 +277,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             userReference.removeEventListener(userListener);
         }
     }
-
 
 
 }
