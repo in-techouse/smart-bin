@@ -81,9 +81,8 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private MapView mapView;
     private GoogleMap googleMap;
     private TextView locationAddress;
-    private LinearLayout searching, wasteLayout;
+    private LinearLayout searching;
     private Button confirm;
-    private List<User> data;
     private EditText wasteWeight;
     private CountDownTimer timer;
     private ProgressBar sheetProgress;
@@ -92,7 +91,6 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private double trashWeight;
     private Booking activeBooking;
     private DatabaseReference bookingReference = FirebaseDatabase.getInstance().getReference().child("Bookings");
-    private Button cancelBooking;
     private Marker activeDriverMarker;
     private FusedLocationProviderClient locationProviderClient;
     private Marker marker;
@@ -102,8 +100,8 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private TextView driverName, driverAddress, driverDate, trashWeightDriver;
     private CircleImageView driverImage;
     private ValueEventListener driverValueListener;
-    private List<User> users;
     private User activeDriver;
+    private int finalWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +120,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
         locationAddress = findViewById(R.id.locationAddress);
         searching = findViewById(R.id.searching);
-        wasteLayout = findViewById(R.id.wasteLayout);
+        LinearLayout wasteLayout = findViewById(R.id.wasteLayout);
         confirm = findViewById(R.id.confirm);
         wasteWeight = findViewById(R.id.wasteSize);
         confirm = findViewById(R.id.confirm);
@@ -138,9 +136,9 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         driverDate = findViewById(R.id.driver_bookingDate);
         trashWeightDriver = findViewById(R.id.trashWeight);
         driverImage = findViewById(R.id.driverImage);
-        users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
-        cancelBooking = findViewById(R.id.cancelDriverBooking);
+        Button cancelBooking = findViewById(R.id.cancelDriverBooking);
         cancelBooking.setOnClickListener(this);
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -222,7 +220,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
     private void getAllDrivers() {
         Log.e("Dashboard", "Get Driver All Drivers Called");
-        data = new ArrayList<>();
+        final List<User> data = new ArrayList<>();
 
         driversListener = new ValueEventListener() {
             @Override
@@ -343,7 +341,6 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
             Log.e("location", "in outer catch of unknown");
             helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG, e.toString());
         }
-        listenToNotifications();
     }
 
     @Override
@@ -362,28 +359,6 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         session.setSession(user);
         userReference.child(user.getId()).setValue(user);
     }
-
-    private void listenToNotifications() {
-//        notificationRefrence.orderByChild("userId").equalTo(user.getPhone()).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.getValue() != null) {
-//                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-//                        Notification n = data.getValue(Notification.class);
-//                        if (n != null && !n.isRead()) {
-//                            showNotificationsDialog(n);
-//                        }
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
-    }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -442,8 +417,6 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         if (bookingsValueListener != null) {
             bookingReference.removeEventListener(bookingsValueListener);
         }
-
-
     }
 
     @Override
@@ -476,59 +449,6 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 boolean wasteFlag = wasteValidater();
                 if (wasteFlag) {
                     postBooking();
-//                    searching.setVisibility(View.VISIBLE);
-//                    wasteLayout.setVisibility(View.GONE);
-//                    activeBooking = new Booking();
-////                    final Booking booking = new Booking();
-//                    String key = bookingReference.push().getKey();
-//                    activeBooking.setId(key);
-//                    activeBooking.setUserId(user.getId());
-//                    activeBooking.setPayment(0);
-//                    activeBooking.setPickup(locationAddress.getText().toString());
-//                    activeBooking.setDriverId("");
-//                    activeBooking.setStatus("New");
-//                    activeBooking.setLat(marker.getPosition().latitude);
-//                    activeBooking.setLng(marker.getPosition().longitude);
-//                    Date d = new Date();
-//                    String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
-//                    activeBooking.setStartTime(date);
-//                    activeBooking.setTrashWeight(trashWeight);
-//                    bookingReference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            listenToBookingChanges();
-//                            timer = new CountDownTimer(30000, 1000) {
-//                                @Override
-//                                public void onTick(long millisUntilFinished) {
-//                                    Log.e("Dashboard", "OnTick");
-//                                }
-//
-//                                @Override
-//                                public void onFinish() {
-//                                    Log.e("Dashboard", "onFinish");
-//                                    if (activeBooking.getStatus().equals("New")) {
-//                                        activeBooking.setStatus("Rejected");
-//                                        bookingReference.child(activeBooking.getId()).setValue(activeBooking);
-//                                        searching.setVisibility(View.GONE);
-//                                        wasteLayout.setVisibility(View.VISIBLE);
-//                                        helpers.showError(DashBoard.this, "Service Error", "No Service Provider Available Please Try Again Later!");
-//                                    } else if (activeBooking.getStatus().equals("In Progress")) {
-//                                        searching.setVisibility(View.GONE);
-//                                        wasteLayout.setVisibility(View.VISIBLE);
-//                                        mainSheet.setVisibility(View.VISIBLE);
-//                                        showBottomSheet();
-//                                    }
-//                                }
-//                            };
-//                            timer.start();
-//
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            helpers.showError(DashBoard.this, "Error", "Something Went Wrong!");
-//                        }
-//                    });
                 }
                 break;
             }
@@ -560,7 +480,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         String weight = wasteWeight.getText().toString();
         if (weight.length() > 0) {
             try {
-                int finalWeight = Integer.parseInt(weight);
+                finalWeight = Integer.parseInt(weight);
             } catch (Exception e) {
                 wasteWeight.setError("Invalid weight provided");
                 flag = false;
@@ -715,9 +635,11 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         activeBooking.setDriverId("");
         activeBooking.setPickup(locationAddress.getText().toString());
         activeBooking.setTrashWeight(trashWeight);
+        activeBooking.setTrashWeight(finalWeight);
         bookingReference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                wasteWeight.setText("");
                 startTimer();
                 listenToBookingChanges();
             }

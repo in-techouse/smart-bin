@@ -34,7 +34,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,13 +60,11 @@ import lcwu.fyp.smartbin.model.User;
 
 public class ShowBookingDetails extends AppCompatActivity implements View.OnClickListener {
     private Booking booking;
-    private TextView UserName, user_address, travel, YourAddress;
+    private TextView UserName, user_address, travel, YourAddress, weight;
     private MapView map;
     private GoogleMap googleMap;
-    private Marker userMarker, providerMarker;
     private FusedLocationProviderClient locationProviderClient;
     private Helpers helpers;
-    private Session session;
     private User user, customer;
     private CircleImageView userImage;
 
@@ -111,13 +108,14 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
         map = findViewById(R.id.map);
         travel = findViewById(R.id.Travel);
         YourAddress = findViewById(R.id.your_address);
+        weight = findViewById(R.id.weight);
 
         Button accept = findViewById(R.id.accept);
         Button reject = findViewById(R.id.reject);
         accept.setOnClickListener(this);
         reject.setOnClickListener(this);
 
-        session = new Session(ShowBookingDetails.this);
+        Session session = new Session(ShowBookingDetails.this);
         user = session.getUser();
         helpers = new Helpers();
 
@@ -194,35 +192,6 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
         databaseReference.child("Users").child(booking.getUserId()).addValueEventListener(userListener);
     }
 
-
-    //    private void loaduserdata(){
-//
-//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(booking.getUserId());
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.getValue()!=null){
-//                    customer = dataSnapshot.getValue(User.class);
-//                    if (customer!=null){
-//                        UserName.setText(customer.getFirstName()+" "+customer.getLastName());
-//                        if(customer.getImage() != null && user.getImage().length() > 0){
-//                            Glide.with(ShowBookingDetails.this).load(customer.getImage()).into(userImage);
-//                        }
-//                    }
-//                    else{
-//                        UserName.setText("");
-//                    }
-//                }
-//                else{
-//                    UserName.setText("");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//            }
-//        });
-//    }
     private boolean askForPermission() {
         if (ActivityCompat.checkSelfPermission(ShowBookingDetails.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(ShowBookingDetails.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -316,10 +285,9 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                                     }
                                     YourAddress.setText(strAddress);
                                 }
-//                                loaduserdata();
                                 loadUserData();
                                 user_address.setText(booking.getPickup());
-//                                fare.setText(booking.getFare()+"+ Rs");
+                                weight.setText(booking.getTrashWeight() + " KG");
 
                                 double distance = helpers.distance(me.latitude, me.longitude, customerlocation.latitude, customerlocation.longitude);
                                 travel.setText(distance + " KM");
@@ -374,7 +342,7 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                             } else {
                                 main.setVisibility(View.VISIBLE);
                                 progress.setVisibility(View.GONE);
-//                                helpers.showErrorWithActivityClose(BookingDetails.this, "SORRY", "The booking has been accepted by another driver.");
+                                helpers.showErrorWithActivityClose(ShowBookingDetails.this, "SORRY", "The booking has been accepted by another driver.");
                             }
                         } else {
                             main.setVisibility(View.VISIBLE);
@@ -467,5 +435,23 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                 databaseReference.removeEventListener(userListener);
             }
         }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        map.onLowMemory();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        map.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        map.onPause();
     }
 }

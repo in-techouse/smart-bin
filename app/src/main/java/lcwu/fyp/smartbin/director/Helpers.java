@@ -21,6 +21,33 @@ public class Helpers {
         connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
         return  connected;
     }
+
+    public void showErrorWithActivityClose(final Activity a, String title, String message){
+        MaterialDialog mDialog = new MaterialDialog.Builder(a)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", R.drawable.ic_action_ok, new MaterialDialog.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        // Delete Operation
+                        dialogInterface.dismiss();
+                        a.finish();
+                    }
+                })
+                .setNegativeButton("Close", R.drawable.ic_action_close, new MaterialDialog.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        dialogInterface.dismiss();
+                        a.finish();
+                    }
+                })
+                .build();
+
+        // Show Dialog
+        mDialog.show();
+    }
+
     public void showError(Activity a, String title, String message){
         MaterialDialog mDialog = new MaterialDialog.Builder(a)
                 .setTitle(title)
