@@ -64,14 +64,6 @@ public class NotificationActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_notification);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Notifications");
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setHomeButtonEnabled(true);
-
         helpers = new Helpers();
 
         loading = findViewById(R.id.loading);

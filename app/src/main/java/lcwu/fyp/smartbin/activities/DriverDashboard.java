@@ -725,9 +725,9 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 mainSheet.setVisibility(View.VISIBLE);
                 activeCustomer = dataSnapshot.getValue(User.class);
                 if (activeCustomer != null && activeBooking != null) {
-                    if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 0) {
-                        Glide.with(DriverDashboard.this).load(activeCustomer.getImage()).into(customerImage);
-                    }
+//                    if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 0) {
+//                        Glide.with(DriverDashboard.this).load(activeCustomer.getImage()).into(customerImage);
+//                    }
                     customerName.setText(activeCustomer.getFirstName() + " " + activeCustomer.getLastName());
                     customerContact.setText(activeCustomer.getPhoneNumber());
                     customerEmail.setText(activeCustomer.getEmail());

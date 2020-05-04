@@ -1,26 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.BookingActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-    </com.google.android.material.appbar.AppBarLayout>
-
     <LinearLayout
-        android:layout_marginTop="60dp"
         android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,19 +28,18 @@
     </LinearLayout>
 
     <TextView
-        android:layout_marginTop="60dp"
         android:id="@+id/noBooking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_margin="7dp"
+        android:layout_marginTop="60dp"
         android:padding="7dp"
         android:text="No Bookings Found"
         android:textAlignment="center"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="60dp"
         android:id="@+id/bookings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -63,6 +47,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="60dp"
         android:visibility="gone" />
 
     <include layout="@layout/booking_detail_bottom_sheet" />

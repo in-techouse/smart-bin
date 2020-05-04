@@ -64,14 +64,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Bookings");
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setHomeButtonEnabled(true);
-
         loading = findViewById(R.id.loading);
         noBooking = findViewById(R.id.noBooking);
         bookings = findViewById(R.id.bookings);

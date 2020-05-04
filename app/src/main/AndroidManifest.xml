@@ -37,12 +37,10 @@
         <activity
             android:name=".activities.NotificationActivity"
             android:parentActivityName=".activities.DashBoard"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activities.BookingActivity"
             android:parentActivityName=".activities.DashBoard"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activities.UserProfileActivity"
