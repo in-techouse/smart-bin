@@ -271,13 +271,13 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
             } catch (Exception ex) {
                 Log.e("location", "in getDevice location catch");
-                helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG, ex.toString());
+                helpers.showError(DashBoard.this, Constants.ERROR, Constants.ERROR_SOMETHING_WENT_WRONG);
             }
             try {
                 network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             } catch (Exception ex) {
                 Log.e("location", "in network Provider try");
-                helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG, ex.toString());
+                helpers.showError(DashBoard.this, Constants.ERROR, Constants.ERROR_SOMETHING_WENT_WRONG);
 
             }
             if (!gps_enabled && !network_enabled) {
@@ -330,7 +330,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                                 }
                             } catch (Exception exception) {
                                 Log.e("location", "in getlastlocation catch");
-                                helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG, exception.toString());
+                                helpers.showError(DashBoard.this, Constants.ERROR, Constants.ERROR_SOMETHING_WENT_WRONG);
                             }
                             getAllDrivers();
                         }
@@ -340,12 +340,12 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.e("location", "in get last location on failure");
-                    helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG, e.toString());
+                    helpers.showError(DashBoard.this, Constants.ERROR, Constants.ERROR_SOMETHING_WENT_WRONG);
                 }
             });
         } catch (Exception e) {
             Log.e("location", "in outer catch of unknown");
-            helpers.showError(DashBoard.this, Constants.ERROR_SOMETHING_WENT_WRONG, e.toString());
+            helpers.showError(DashBoard.this, Constants.ERROR, Constants.ERROR_SOMETHING_WENT_WRONG);
         }
     }
 
