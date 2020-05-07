@@ -243,7 +243,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
             }
             if (!gps_enabled && !network_enabled) {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(DriverDashboard.this);
-                dialog.setMessage("Oppsss.Your Location Service is off.\n Please turn on your Location and Try again Later");
+                dialog.setMessage("Oppsss.Your Location Service is off.\nPlease turn on your Location and Try again Later");
                 dialog.setPositiveButton("Let me On", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -275,7 +275,6 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(me, 11));
                             Geocoder geocoder = new Geocoder(DriverDashboard.this);
                             List<Address> addresses = null;
-                            Log.e("location", "goint to try");
                             try {
                                 Log.e("location", "lat is " + me.latitude + " and long " + me.longitude);
                                 addresses = geocoder.getFromLocation(me.latitude, me.longitude, 1);
@@ -473,7 +472,23 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         notification.setUserText("Your booking has been cancelled by " + user.getFirstName() + " " + user.getLastName());
         notification.setDriverText("You cancelled your booking with " + activeCustomer.getFirstName() + " " + activeCustomer.getLastName());
         notificationReference.child(notification.getId()).setValue(notification);
-        activeBooking = null;
+    }
+
+    private void sendCompletedNotification() {
+        DatabaseReference notificationReference = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        Notification notification = new Notification();
+        String id = notificationReference.push().getKey();
+        notification.setId(id);
+        notification.setBookingId(activeBooking.getId());
+        notification.setUserId(activeBooking.getUserId());
+        notification.setDriverId(activeBooking.getDriverId());
+        notification.setRead(false);
+        Date d = new Date();
+        String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
+        notification.setDate(date);
+        notification.setUserText("Your booking has been marked complete by " + user.getFirstName() + " " + user.getLastName());
+        notification.setDriverText("You completed your booking with " + activeCustomer.getFirstName() + " " + activeCustomer.getLastName());
+        notificationReference.child(notification.getId()).setValue(notification);
     }
 
     @Override
@@ -489,11 +504,11 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 mainSheet.setVisibility(View.GONE);
                 sheetProgress.setVisibility(View.VISIBLE);
                 activeBooking.setStatus("Cancelled");
+                sendCancelledNotification();
                 bookingsReference.child(activeBooking.getId()).child("status").setValue(activeBooking.getStatus()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.e("ProviderDashboard", "Cancelled");
-                        sendCancelledNotification();
                         sheetBehavior.setHideable(true);
                         sheetProgress.setVisibility(View.GONE);
                         sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -543,6 +558,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 activeBooking.setAmountCharged(amount);
                 activeBooking.setTrashWeight(weight);
                 totalCharge.setText("");
+                sendCompletedNotification();
                 bookingsReference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -559,7 +575,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                         mainSheet.setVisibility(View.VISIBLE);
                     }
                 });
-
+                break;
             }
             case R.id.call: {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -673,6 +689,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         mainSheet.setVisibility(View.VISIBLE);
         sheetBehavior.setHideable(true);
         sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        activeBooking = null;
         listenToBookings();
     }
 }

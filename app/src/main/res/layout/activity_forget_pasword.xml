@@ -39,9 +39,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margen25"
         android:background="@color/colorPrimaryDark"
+        android:paddingTop="@dimen/mp5"
+        android:paddingBottom="@dimen/mp5"
         android:text="SEND RECOVERY EMAIL"
         android:textColor="@color/white"
-        android:textSize="@dimen/textsize" />
+        android:textSize="@dimen/loginbtnsize" />
 
     <ProgressBar
         android:id="@+id/ForgetProgress"

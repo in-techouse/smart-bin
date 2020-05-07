@@ -28,13 +28,13 @@ import lcwu.fyp.smartbin.director.Session;
 import lcwu.fyp.smartbin.model.User;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btnLogin;
-    EditText edtEmail, edtPasword;
-    String strEmail, strPasword;
-    TextView go_to_registertaion;
-    TextView go_to_forgetPasword;
-    ProgressBar LoginProgress;
-    Helpers helpers;
+    private DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+    private ValueEventListener listener;
+    private Button btnLogin;
+    private EditText edtEmail, edtPasword;
+    private String strEmail, strPasword;
+    private ProgressBar LoginProgress;
+    private Helpers helpers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin = findViewById(R.id.btnLogin);
         edtEmail = findViewById(R.id.edtEmail);
         edtPasword = findViewById(R.id.edtPasword);
-        go_to_registertaion = findViewById(R.id.go_to_registration);
-        go_to_forgetPasword = findViewById(R.id.go_to_forgetPasword);
+        TextView go_to_registertaion = findViewById(R.id.go_to_registration);
+        TextView go_to_forgetPasword = findViewById(R.id.go_to_forgetPasword);
         LoginProgress = findViewById(R.id.LoginProgress);
 
         btnLogin.setOnClickListener(this);
@@ -83,14 +83,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
-                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                                    String id = strEmail.replace("@", "-");
-                                    id = id.replace(".", "_");
-                                    reference.child("Users").child(id).addValueEventListener(new ValueEventListener() {
+                                    String uid = strEmail.replace("@", "-");
+                                    final String id = uid.replace(".", "_");
+                                    listener = new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (listener != null)
+                                                reference.child("Users").child(id).removeEventListener(listener);
+                                            if (listener != null)
+                                                reference.removeEventListener(listener);
+
                                             if (dataSnapshot.getValue() != null) {
-                                                //Data is valid
+                                                // Data is valid
                                                 User u = dataSnapshot.getValue(User.class);
                                                 if (u == null) {
                                                     LoginProgress.setVisibility(View.GONE);
@@ -119,12 +123,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            if (listener != null)
+                                                reference.child("Users").child(id).removeEventListener(listener);
+                                            if (listener != null)
+                                                reference.removeEventListener(listener);
+
                                             LoginProgress.setVisibility(View.GONE);
                                             btnLogin.setVisibility(View.VISIBLE);
                                             helpers.showError(LoginActivity.this, "Login Failed", "Something went wrong");
-
                                         }
-                                    });
+                                    };
+                                    reference.child("Users").child(id).addValueEventListener(listener);
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

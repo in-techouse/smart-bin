@@ -121,6 +121,7 @@
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="don_t_have_an_account_click_here_to_register">Don\'t have an account? <b>Click here to Register?</b></string>
     <string name="forgot_password_click_here_to_recover">Forgot Password? <b>Click here to Recover?</b></string>
+    <string name="register">Register</string>
 
 
 </resources>

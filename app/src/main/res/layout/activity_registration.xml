@@ -122,11 +122,12 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:background="@color/colorPrimaryDark"
-            android:padding="@dimen/textpadding"
-            android:text="@string/submit"
+            android:paddingTop="@dimen/mp5"
+            android:paddingBottom="@dimen/mp5"
+            android:text="@string/register"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="@dimen/textsize" />
+            android:textSize="@dimen/loginbtnsize" />
 
         <ProgressBar
             android:id="@+id/RegistrationProgress"

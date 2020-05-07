@@ -47,7 +47,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="60dp"
         android:visibility="gone" />
 
     <include layout="@layout/booking_detail_bottom_sheet" />

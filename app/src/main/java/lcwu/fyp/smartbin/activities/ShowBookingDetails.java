@@ -280,7 +280,7 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
                                     Address address = addresses.get(0);
                                     String strAddress = "";
                                     for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                                        strAddress = strAddress + " " + address.getAddressLine(i);
+                                        strAddress = strAddress + address.getAddressLine(i) + " ";
                                     }
                                     YourAddress.setText(strAddress);
                                 }
