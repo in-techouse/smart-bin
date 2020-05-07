@@ -9,8 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lcwu.fyp.smartbin.R;
 import lcwu.fyp.smartbin.activities.BookingActivity;
 import lcwu.fyp.smartbin.model.Booking;
@@ -18,14 +20,11 @@ import lcwu.fyp.smartbin.model.Booking;
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingHolder> {
 
     private List<Booking> data;
-    private Context context;
     private BookingActivity bookingActivity;
 
 
-    public BookingAdapter(Context c , BookingActivity b)
-    {
+    public BookingAdapter(Context c, BookingActivity b) {
         data = new ArrayList<>();
-        context = c;
         bookingActivity = b;
 
     }
@@ -38,7 +37,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingH
     @NonNull
     @Override
     public BookingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_booking,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_booking, parent, false);
         return new BookingHolder(v);
     }
 
@@ -47,7 +46,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingH
 
         final Booking b = data.get(position);
         holder.date.setText(b.getStartTime());
-//        holder.trashWeight.setText(b.getTrashWeight()+"");
         holder.status.setText(b.getStatus());
         holder.address.setText(b.getPickup());
 
@@ -65,11 +63,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingH
         return data.size();
     }
 
-    class BookingHolder extends RecyclerView.ViewHolder{
+    class BookingHolder extends RecyclerView.ViewHolder {
         TextView date, trashWeight, status, address;
         CardView mainCard;
 
-        public BookingHolder(@NonNull View itemView) {
+        BookingHolder(@NonNull View itemView) {
             super(itemView);
             date = itemView.findViewById(R.id.date);
             trashWeight = itemView.findViewById(R.id.trashWeight);

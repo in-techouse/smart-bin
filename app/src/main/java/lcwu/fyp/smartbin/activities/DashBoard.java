@@ -11,6 +11,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -97,7 +99,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
     private DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("Users");
     private ValueEventListener driverDetailValueListener, driversListener, bookingsValueListener, bookingValueListener;
-    private TextView driverName, driverAddress, driverDate, trashWeightDriver;
+    private TextView driverName, driverAddress, driverDate, trashWeightDriver, driverEmail, driverPhone;
     private CircleImageView driverImage;
     private ValueEventListener driverValueListener;
     private User activeDriver;
@@ -136,6 +138,10 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
         driverDate = findViewById(R.id.driver_bookingDate);
         trashWeightDriver = findViewById(R.id.trashWeight);
         driverImage = findViewById(R.id.driverImage);
+        driverEmail = findViewById(R.id.driverEmail);
+        driverPhone = findViewById(R.id.driverPhone);
+        ImageView call = findViewById(R.id.call);
+        call.setOnClickListener(this);
         List<User> users = new ArrayList<>();
 
         Button cancelBooking = findViewById(R.id.cancelDriverBooking);
@@ -317,7 +323,7 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                                     Address address = addresses.get(0);
                                     String strAddress = "";
                                     for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                                        strAddress = strAddress + " " + address.getAddressLine(i);
+                                        strAddress = strAddress + address.getAddressLine(i) + " ";
                                     }
                                     locationAddress.setText(strAddress);
                                     updateUserLocation(me.latitude, me.longitude);
@@ -472,6 +478,12 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
 
                 break;
             }
+            case R.id.call: {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + activeDriver.getPhoneNumber()));
+                startActivity(intent);
+                break;
+            }
         }
     }
 
@@ -531,7 +543,9 @@ public class DashBoard extends AppCompatActivity implements NavigationView.OnNav
                         Glide.with(DashBoard.this).load(activeDriver.getImage()).into(driverImage);
                     }
                     driverName.setText(activeDriver.getFirstName() + " " + activeDriver.getLastName());
-                    trashWeightDriver.setText(activeDriver.getPhoneNumber());
+                    driverEmail.setText(activeDriver.getEmail());
+                    driverPhone.setText(activeDriver.getPhoneNumber());
+                    trashWeightDriver.setText(activeBooking.getTrashWeight() + " KG");
                     driverDate.setText(activeBooking.getStartTime());
                     driverAddress.setText(activeBooking.getPickup());
                     if (activeDriverMarker != null) {

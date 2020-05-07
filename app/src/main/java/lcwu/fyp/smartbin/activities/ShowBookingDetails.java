@@ -67,7 +67,6 @@ public class ShowBookingDetails extends AppCompatActivity implements View.OnClic
     private Helpers helpers;
     private User user, customer;
     private CircleImageView userImage;
-
     private LinearLayout progress, main;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private ValueEventListener bookingListener, userListener;

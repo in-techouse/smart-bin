@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/driver_bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="340dp"
+    android:layout_height="350dp"
     android:background="@color/white"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="340dp"
+    app:behavior_peekHeight="350dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
@@ -29,10 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/driver_Image"
+                android:id="@+id/customerImage"
                 android:layout_width="94dp"
                 android:layout_height="94dp"
                 android:layout_alignParentStart="true"
@@ -46,39 +46,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/driver_Image"
+                android:layout_toEndOf="@+id/customerImage"
                 android:text="Order Details"
                 android:textColor="#444"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/customerPhone"
+                android:id="@+id/customerEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/driverName"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/driver_Image"
+                android:layout_toEndOf="@+id/customerImage"
                 android:text="Order Details"
                 android:textColor="#444"
                 android:textSize="17dp" />
 
-            <TextView
-                android:id="@+id/customerEmail"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/customerPhone"
+                android:layout_below="@id/customerEmail"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/driver_Image"
-                android:text="Order Details"
-                android:textColor="#444"
-                android:textSize="15dp" />
+                android:layout_toEndOf="@+id/customerImage">
+
+                <TextView
+                    android:id="@+id/customerPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Order Details"
+                    android:textColor="#444"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/call"
+                    android:layout_width="@dimen/mp25"
+                    android:layout_height="@dimen/mp25"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/customerPhone"
+                    android:src="@drawable/call" />
+
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:id="@+id/contentLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/driver_Image"
+                android:layout_below="@id/customerImage"
                 android:orientation="vertical">
 
                 <TextView
@@ -143,21 +160,22 @@
                 </RelativeLayout>
 
                 <Button
-
                     android:id="@+id/cancelBooking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="13dp"
+                    android:layout_marginTop="@dimen/mp5"
                     android:background="@color/colorReject"
+                    android:backgroundTint="@android:color/holo_red_light"
+                    android:foreground="?attr/selectableItemBackground"
                     android:text="Cancel Booking"
-                    android:textColor="@color/white"
+                    android:textColor="#fff"
                     android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/completeBooking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="13dp"
+                    android:layout_marginTop="@dimen/mp5"
                     android:background="@color/colorAccept"
                     android:text="MARK COMPLETE"
                     android:textColor="@color/white"
@@ -172,19 +190,34 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/mp10"
             android:layout_marginEnd="@dimen/mp10"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mp10"
-                android:padding="@dimen/mp10">
+                android:layout_margin="@dimen/mp7"
+                android:padding="@dimen/mp7">
+
+                <EditText
+                    android:id="@+id/totalTrashWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Total trash collected from user?"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mp7"
+                android:padding="@dimen/mp7">
 
                 <EditText
                     android:id="@+id/totalCharge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Total Amount charged from the user?"
+                    android:hint="Total Amount given to the user?"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 

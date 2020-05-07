@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/customer_bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="290dp"
+    android:layout_height="320dp"
     android:background="#fff"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="290dp"
+    app:behavior_peekHeight="320dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
@@ -51,7 +51,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/trashWeight"
+                android:id="@+id/driverEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/driver_name"
@@ -61,14 +61,63 @@
                 android:textColor="#444"
                 android:textSize="15dp" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/driverEmail"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/driverImage">
+
+                <TextView
+                    android:id="@+id/driverPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Order Details"
+                    android:textColor="#444"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/call"
+                    android:layout_width="@dimen/mp25"
+                    android:layout_height="@dimen/mp25"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/driverPhone"
+                    android:src="@drawable/call" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/weightLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/driverImage"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="Trash Weight"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/trashWeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/driver_bookingDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/driverImage"
+                android:layout_below="@id/weightLayout"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="10dp"
-                android:layout_toEndOf="@+id/driverImage"
                 android:text="Booking Date"
                 android:textColor="#444"
                 android:textSize="13dp" />
@@ -91,13 +140,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/driver_bookingAddress"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="@dimen/mp7"
+                android:layout_marginBottom="@dimen/mp5"
                 android:backgroundTint="@android:color/holo_red_light"
                 android:foreground="?attr/selectableItemBackground"
-                android:text="Cancel"
+                android:text="Cancel Booking"
                 android:textColor="#fff" />
-
 
         </RelativeLayout>
 

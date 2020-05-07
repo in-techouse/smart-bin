@@ -11,6 +11,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -28,7 +30,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -59,6 +60,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -74,16 +77,10 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
     private Session session;
     private Helpers helpers;
     private User user, activeCustomer;
-    private CircleImageView Profile_image;
-    private TextView Profile_name;
-    private TextView Profile_email;
     private DrawerLayout drawer;
     private MapView mapView;
     private GoogleMap googleMap;
-    private NavigationView navigationView;
     private TextView locationAddress;
-    private LinearLayout searching;
-    private Button confirm;
     private ProgressBar sheetProgress;
     private RelativeLayout mainSheet;
     private BottomSheetBehavior sheetBehavior;
@@ -94,12 +91,9 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
     private DatabaseReference bookingsReference = FirebaseDatabase.getInstance().getReference().child("Bookings");
     private DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("Users");
     private Marker customerMarker;
-    private EditText totalCharge;
+    private EditText totalCharge, totalTrashWeight;
     private LinearLayout amountLayout;
-
-
     private FusedLocationProviderClient locationProviderClient;
-    private Marker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,11 +108,11 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         user = session.getUser();
 
         drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         locationAddress = findViewById(R.id.locationAddress);
-        searching = findViewById(R.id.searching);
-        confirm = findViewById(R.id.confirm);
+        LinearLayout searching = findViewById(R.id.searching);
+        Button confirm = findViewById(R.id.confirm);
 
         LinearLayout layoutBottomSheet = findViewById(R.id.driver_bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
@@ -129,18 +123,20 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         customerName = findViewById(R.id.driverName);
         trashWeight = findViewById(R.id.trashWeight);
         customerContact = findViewById(R.id.customerPhone);
-        customerImage = findViewById(R.id.driverImage);
+        customerImage = findViewById(R.id.customerImage);
         bookingAddress = findViewById(R.id.driver_bookingAddress);
         bookingDate = findViewById(R.id.driver_bookingDate);
         customerEmail = findViewById(R.id.customerEmail);
+        ImageView call = findViewById(R.id.call);
+        call.setOnClickListener(this);
 
         Button completeBooking = findViewById(R.id.completeBooking);
         Button cancelBooking = findViewById(R.id.cancelBooking);
 
         totalCharge = findViewById(R.id.totalCharge);
+        totalTrashWeight = findViewById(R.id.totalTrashWeight);
         amountLayout = findViewById(R.id.amountLayout);
         Button amountSubmit = findViewById(R.id.amountSubmit);
-
 
         completeBooking.setOnClickListener(this);
         cancelBooking.setOnClickListener(this);
@@ -152,15 +148,15 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         View hadder = navigationView.getHeaderView(0);
-        Profile_image = hadder.findViewById(R.id.profile_image);
-        Profile_name = hadder.findViewById(R.id.profile_name);
-        Profile_email = hadder.findViewById(R.id.profile_email);
+        CircleImageView profile_image = hadder.findViewById(R.id.profile_image);
+        TextView profile_name = hadder.findViewById(R.id.profile_name);
+        TextView profile_email = hadder.findViewById(R.id.profile_email);
 
-        Profile_name.setText(user.getFirstName() + " " + user.getLastName());
-        Profile_email.setText(user.getEmail());
+        profile_name.setText(user.getFirstName() + " " + user.getLastName());
+        profile_email.setText(user.getEmail());
 
         if (user.getImage() != null && user.getImage().length() > 0) {
-            Glide.with(getApplicationContext()).load(user.getImage()).into(Profile_image);
+            Glide.with(getApplicationContext()).load(user.getImage()).into(profile_image);
         }
 
 
@@ -274,7 +270,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                         if (location != null) {
                             googleMap.clear();
                             LatLng me = new LatLng(location.getLatitude(), location.getLongitude());
-                            marker = googleMap.addMarker(new MarkerOptions().position(me).title("You're Here")
+                            googleMap.addMarker(new MarkerOptions().position(me).title("You're Here")
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(me, 11));
                             Geocoder geocoder = new Geocoder(DriverDashboard.this);
@@ -288,7 +284,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                                     Address address = addresses.get(0);
                                     String strAddress = "";
                                     for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                                        strAddress = strAddress + " " + address.getAddressLine(i);
+                                        strAddress = strAddress + address.getAddressLine(i) + " ";
                                     }
                                     locationAddress.setText(strAddress);
                                     updateUserLocation(me.latitude, me.longitude);
@@ -311,7 +307,6 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
             Log.e("location", "in outer catch of unknown");
             helpers.showError(DriverDashboard.this, Constants.ERROR_SOMETHING_WENT_WRONG, e.toString());
         }
-//        listenToNotifications();
     }
 
     @Override
@@ -331,79 +326,6 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         session.setSession(user);
         userReference.child(user.getId()).setValue(user);
     }
-
-//    private void listenToNotifications() {
-////        notificationRefrence.orderByChild("userId").equalTo(user.getPhone()).addValueEventListener(new ValueEventListener() {
-////            @Override
-////            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-////                if (dataSnapshot.getValue() != null) {
-////                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-////                        Notification n = data.getValue(Notification.class);
-////                        if (n != null && !n.isRead()) {
-////                            showNotificationsDialog(n);
-////                        }
-////                    }
-////                }
-////            }
-////            @Override
-////            public void onCancelled(@NonNull DatabaseError databaseError) {
-////
-////            }
-////        });
-//
-//    }
-
-    private void showNotificationsDialog(final Notification notification) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(DriverDashboard.this, "1");
-        builder.setTicker("New Notification");
-        builder.setAutoCancel(true);
-        builder.setChannelId("1");
-        builder.setContentInfo("New Notification ");
-        builder.setContentTitle("New Notification ");
-//        builder.setContentText(notification.getMessage());
-        builder.setContentText("Notification Content");
-
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-        builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
-        builder.build();
-//        Intent notificationIntent = new Intent(Dashboard.this,BookingDetailActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("Notification", notification);
-//        notificationIntent.putExtras(bundle);
-//        PendingIntent conPendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        builder.setContentIntent(conPendingIntent);
-//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        if (manager != null) {
-//            manager.notify(10, builder.build());
-//        }
-//        final MaterialDialog dialog = new MaterialDialog.Builder(Dashboard.this)
-//                .setTitle("NEW Notification")
-//                .setMessage(notification.getMessage())
-//                .setCancelable(false)
-//                .setPositiveButton("DETAILS", R.drawable.ic_okay, new MaterialDialog.OnClickListener() {
-//                    @Override
-//                    public void onClick(com.shreyaspatil.MaterialDialog.interfaces.DialogInterface dialogInterface, int which) {
-//                        dialogInterface.dismiss();
-//                        Intent it = new Intent(Dashboard.this, BookingDetailActivity.class);
-//                        Bundle bundle = new Bundle();
-//                        bundle.putSerializable("Notification",notification);
-//                        it.putExtras(bundle);
-//                        startActivity(it);
-//                    }
-//                })
-//                .setNegativeButton("CLOSE", R.drawable.ic_close, new MaterialDialog.OnClickListener() {
-//                    @Override
-//                    public void onClick(com.shreyaspatil.MaterialDialog.interfaces.DialogInterface dialogInterface, int which) {
-//                        dialogInterface.dismiss();
-//                    }
-//                })
-//                .build();
-        // Show Dialog
-//        dialog.show();
-
-    }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -506,96 +428,6 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         };
         bookingsReference.addValueEventListener(bookingsValueListener);
     }
-//
-//<<<<<<<Updated upstream
-////    private void loadCustomerDetails(){
-////        Log.e("VendorDashboard", "Call Received to Load Customer");
-////        sheetProgress.setVisibility(View.VISIBLE);
-////        mainSheet.setVisibility(View.GONE);
-////        userValueEventListener = new ValueEventListener() {
-////            @Override
-////            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-////                userReference.removeEventListener(userValueEventListener);
-////                if(activeCustomer == null) {
-////                    Log.e("VendorDashboard", "User Value Received, on Data Changed: " + dataSnapshot.toString());
-////                    activeCustomer = dataSnapshot.getValue(User.class);
-////                    if (activeCustomer != null) {
-////                        if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 1) {
-////                            Log.e("VendorDashboard", "Active Customer Image Found");
-//////                            Glide.with(getApplicationContext()).load(activeCustomer.getImage()).into(customerImage);
-////                        }
-////                        Log.e("VendorDashboard", "Active Customer Detail set, Id: " + activeCustomer.getId());
-////                        Log.e("VendorDashboard", "Active Customer Detail set, Name: " + activeCustomer.getFirstName() + " Contact: " + activeCustomer.getPhoneNumber());
-////                        Log.e("VendorDashboard", "Active Customer Detail set, Image: " + activeCustomer.getImage() + " Email: " + activeCustomer.getEmail());
-////                        customerName.setText(activeCustomer.getFirstName()+" "+activeCustomer.getLastName());
-//////                        customerContact.setText(activeCustomer.getPhoneNumber()+"");
-////                        customerEmail.setText(activeCustomer.getEmail());
-////                        bookingDate.setText(activeBooking.getStartTime());
-////                        bookingAddress.setText(activeBooking.getPickup());
-////                        trashWeight.setText(activeBooking.getTrashWeightig()+"");
-////                    }
-////                }
-////                sheetProgress.setVisibility(View.GONE);
-////                mainSheet.setVisibility(View.VISIBLE);
-////            }
-////
-////            @Override
-////            public void onCancelled(@NonNull DatabaseError databaseError) {
-////                userReference.removeEventListener(userValueEventListener);
-////                Log.e("VendorDashboard", "User Value Received, on Cancelled: " + databaseError.getMessage());
-////                sheetProgress.setVisibility(View.GONE);
-////                mainSheet.setVisibility(View.VISIBLE);
-////            }
-////        };
-////        userReference.child(activeBooking.getUserId()).addValueEventListener(userValueEventListener);
-////        listenToActiveBookingChange();
-////    }
-//=======
-//
-//    private void loadCustomerDetails() {
-//        Log.e("VendorDashboard", "Call Received to Load Customer");
-//        sheetProgress.setVisibility(View.VISIBLE);
-//        mainSheet.setVisibility(View.GONE);
-//        userValueEventListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                userReference.removeEventListener(userValueEventListener);
-//                if (activeCustomer == null) {
-//                    Log.e("VendorDashboard", "User Value Received, on Data Changed: " + dataSnapshot.toString());
-//                    activeCustomer = dataSnapshot.getValue(User.class);
-//                    if (activeCustomer != null) {
-//                        if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 1) {
-//                            Log.e("VendorDashboard", "Active Customer Image Found");
-////                            Glide.with(getApplicationContext()).load(activeCustomer.getImage()).into(customerImage);
-//                        }
-//                        Log.e("VendorDashboard", "Active Customer Detail set, Id: " + activeCustomer.getId());
-//                        Log.e("VendorDashboard", "Active Customer Detail set, Name: " + activeCustomer.getFirstName() + " Contact: " + activeCustomer.getPhoneNumber());
-//                        Log.e("VendorDashboard", "Active Customer Detail set, Image: " + activeCustomer.getImage() + " Email: " + activeCustomer.getEmail());
-//                        customerName.setText(activeCustomer.getFirstName() + " " + activeCustomer.getLastName());
-////                        customerContact.setText(activeCustomer.getPhoneNumber()+"");
-//                        customerEmail.setText(activeCustomer.getEmail());
-//                        bookingDate.setText(activeBooking.getStartTime());
-//                        bookingAddress.setText(activeBooking.getPickup());
-//                        trashWeight.setText(activeBooking.getTrashWeight() + "");
-//                    }
-//                }
-//                sheetProgress.setVisibility(View.GONE);
-//                mainSheet.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                userReference.removeEventListener(userValueEventListener);
-//                Log.e("VendorDashboard", "User Value Received, on Cancelled: " + databaseError.getMessage());
-//                sheetProgress.setVisibility(View.GONE);
-//                mainSheet.setVisibility(View.VISIBLE);
-//            }
-//        };
-//        userReference.child(activeBooking.getUserId()).addValueEventListener(userValueEventListener);
-//        listenToActiveBookingChange();
-//    }
-//>>>>>>>
-//    Stashed changes
 
     private void showBookingDialog(final Booking booking) {
 
@@ -626,6 +458,23 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         dialog.show();
     }
 
+    private void sendCancelledNotification() {
+        DatabaseReference notificationReference = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        Notification notification = new Notification();
+        String id = notificationReference.push().getKey();
+        notification.setId(id);
+        notification.setBookingId(activeBooking.getId());
+        notification.setUserId(activeBooking.getUserId());
+        notification.setDriverId(activeBooking.getDriverId());
+        notification.setRead(false);
+        Date d = new Date();
+        String date = new SimpleDateFormat("EEE dd, MMM, yyyy HH:mm").format(d);
+        notification.setDate(date);
+        notification.setUserText("Your booking has been cancelled by " + user.getFirstName() + " " + user.getLastName());
+        notification.setDriverText("You cancelled your booking with " + activeCustomer.getFirstName() + " " + activeCustomer.getLastName());
+        notificationReference.child(notification.getId()).setValue(notification);
+        activeBooking = null;
+    }
 
     @Override
     public void onClick(View v) {
@@ -644,6 +493,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.e("ProviderDashboard", "Cancelled");
+                        sendCancelledNotification();
                         sheetBehavior.setHideable(true);
                         sheetProgress.setVisibility(View.GONE);
                         sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -660,9 +510,21 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 break;
             }
             case R.id.amountSubmit: {
+                String strTotalTrashWeight = totalTrashWeight.getText().toString();
                 String strTotalCharge = totalCharge.getText().toString();
+                if (strTotalTrashWeight.length() < 1) {
+                    totalTrashWeight.setError("Enter some valid weight.");
+                    return;
+                }
                 if (strTotalCharge.length() < 1) {
                     totalCharge.setError("Enter some valid amount.");
+                    return;
+                }
+                int weight = 0;
+                try {
+                    weight = Integer.parseInt(strTotalTrashWeight);
+                } catch (Exception e) {
+                    totalTrashWeight.setError("Enter some valid amount.");
                     return;
                 }
                 int amount = 0;
@@ -679,6 +541,7 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 sheetProgress.setVisibility(View.VISIBLE);
                 activeBooking.setStatus("Completed");
                 activeBooking.setAmountCharged(amount);
+                activeBooking.setTrashWeight(weight);
                 totalCharge.setText("");
                 bookingsReference.child(activeBooking.getId()).setValue(activeBooking).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -697,6 +560,12 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                     }
                 });
 
+            }
+            case R.id.call: {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + activeCustomer.getPhoneNumber()));
+                startActivity(intent);
+                break;
             }
         }
     }
@@ -725,13 +594,13 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
                 mainSheet.setVisibility(View.VISIBLE);
                 activeCustomer = dataSnapshot.getValue(User.class);
                 if (activeCustomer != null && activeBooking != null) {
-//                    if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 0) {
-//                        Glide.with(DriverDashboard.this).load(activeCustomer.getImage()).into(customerImage);
-//                    }
+                    if (activeCustomer.getImage() != null && activeCustomer.getImage().length() > 0) {
+                        Glide.with(DriverDashboard.this).load(activeCustomer.getImage()).into(customerImage);
+                    }
                     customerName.setText(activeCustomer.getFirstName() + " " + activeCustomer.getLastName());
                     customerContact.setText(activeCustomer.getPhoneNumber());
                     customerEmail.setText(activeCustomer.getEmail());
-                    trashWeight.setText(activeBooking.getTrashWeight() + "");
+                    trashWeight.setText(activeBooking.getTrashWeight() + " KG");
 
                     bookingAddress.setText(activeBooking.getPickup());
                     bookingDate.setText(activeBooking.getStartTime());
@@ -804,7 +673,6 @@ public class DriverDashboard extends AppCompatActivity implements NavigationView
         mainSheet.setVisibility(View.VISIBLE);
         sheetBehavior.setHideable(true);
         sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        activeBooking = null;
         listenToBookings();
     }
 }

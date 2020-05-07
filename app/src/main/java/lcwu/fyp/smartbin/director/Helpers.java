@@ -11,18 +11,19 @@ import androidx.core.app.NotificationCompat;
 
 import com.shreyaspatil.MaterialDialog.MaterialDialog;
 import com.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
+
 import lcwu.fyp.smartbin.R;
 
 public class Helpers {
     // Check Internet Connection
     public boolean isConnected(Context c) {
         boolean connected = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
         connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
-        return  connected;
+        return connected;
     }
 
-    public void showErrorWithActivityClose(final Activity a, String title, String message){
+    public void showErrorWithActivityClose(final Activity a, String title, String message) {
         MaterialDialog mDialog = new MaterialDialog.Builder(a)
                 .setTitle(title)
                 .setMessage(message)
@@ -48,7 +49,7 @@ public class Helpers {
         mDialog.show();
     }
 
-    public void showError(Activity a, String title, String message){
+    public void showError(Activity a, String title, String message) {
         MaterialDialog mDialog = new MaterialDialog.Builder(a)
                 .setTitle(title)
                 .setMessage(message)
@@ -82,11 +83,12 @@ public class Helpers {
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
-        long factor = (long)Math.pow(10, 3);
+        long factor = (long) Math.pow(10, 3);
         dist = dist * factor;
         double temp = Math.round(dist);
-        return (temp/factor);
+        return (temp / factor);
     }
+
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }

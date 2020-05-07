@@ -1,6 +1,5 @@
 package lcwu.fyp.smartbin.activities;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,7 +40,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout loading;
     private TextView noBooking;
     private RecyclerView bookings;
-    private Session session;
     private User user;
     private List<Booking> Data;
     private DatabaseReference bookingReference = FirebaseDatabase.getInstance().getReference().child("Bookings");
@@ -51,7 +48,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private BookingAdapter bookingAdapter;
     private String orderBy;
     private BottomSheetBehavior sheetBehavior;
-    private Button closeSheet;
     private ProgressBar sheetProgress;
     private LinearLayout mainSheet;
     private CircleImageView image;
@@ -67,7 +63,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         loading = findViewById(R.id.loading);
         noBooking = findViewById(R.id.noBooking);
         bookings = findViewById(R.id.bookings);
-        session = new Session(BookingActivity.this);
+        Session session = new Session(BookingActivity.this);
         user = session.getUser();
         bookingAdapter = new BookingAdapter(BookingActivity.this, BookingActivity.this);
         bookings.setLayoutManager(new LinearLayoutManager(BookingActivity.this));
@@ -81,7 +77,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         sheetBehavior.setPeekHeight(0);
         sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        closeSheet = findViewById(R.id.closeSheet);
+        Button closeSheet = findViewById(R.id.closeSheet);
         closeSheet.setOnClickListener(this);
         sheetProgress = findViewById(R.id.sheetProgress);
         mainSheet = findViewById(R.id.mainSheet);

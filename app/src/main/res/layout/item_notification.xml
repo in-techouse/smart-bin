@@ -63,7 +63,6 @@
             android:text="Show more detail"
             android:textAlignment="gravity" />
 
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

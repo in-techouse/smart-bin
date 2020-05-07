@@ -24,7 +24,6 @@
             android:textSize="@dimen/textsize"
             android:textStyle="bold" />
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -43,7 +42,6 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
 
             <EditText
                 android:id="@+id/edtLastName"
@@ -147,7 +145,6 @@
             android:text="@string/go_to_login"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark" />
-
 
     </LinearLayout>
 

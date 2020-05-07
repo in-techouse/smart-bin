@@ -41,7 +41,7 @@ import lcwu.fyp.smartbin.model.User;
 
 public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener, BSImagePicker.OnSingleImageSelectedListener, BSImagePicker.ImageLoaderDelegate {
 
-    private EditText profileFirstName, profileLastName, profileEmail, profilePhone;
+    private EditText profileFirstName, profileLastName, profilePhone;
     Session session;
     User user;
     Button update;
@@ -73,10 +73,9 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-
         profileFirstName = findViewById(R.id.profileFirstName);
         profileLastName = findViewById(R.id.profileLastName);
-        profileEmail = findViewById(R.id.profileEmail);
+        EditText profileEmail = findViewById(R.id.profileEmail);
         profilePhone = findViewById(R.id.profilePhone);
         update = findViewById(R.id.btnUpdation);
         updateProgress = findViewById(R.id.updationProgress);
